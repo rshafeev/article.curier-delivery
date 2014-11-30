@@ -1,263 +1,181 @@
-% !TeX spellcheck = ru_ru_en_us
+% !TeX spellcheck = en_US
 \documentclass[]{TAACpaper}
-
+\usepackage[linesnumbered,boxed]{algorithm2e}
 \begin{document}
+each code-block optionally)
 
 %This is the comment. Further under the text features of use of style of theses are described
 
 %We are specifying language of the paper
-\selectlanguage{russian}
+\selectlanguage{english}
 \def\dd#1#2{\frac{\partial#1}{\partial#2}}
 \section{
 %%%%%%%%%%%%%%% You have to specify name of your paper here
-``О связи задачи маршрутизации с жесткими временными ограничениями с задачей о назначениях'' 
+``Investigation of tuning parameters and modification of tabu search algorithm for solving the Static Routing Courier Delivery Problem.'' 
 }
 
 \authors{
-Р.~А.~Шафеев
+R.~Shafeyev , L.~Lyubchik 
 }
 
 \abstract{
 %%%%%%%%%%%%%%% You have to insert abstract of your paper here
-В статье приводится метод определения решения задачи маршрутизации с учетом временных ограничений, которое можно использовать в вероятностном методе поиска с запретами как нижнюю границу для формирования окрестности потенциальных решений, что может значительно уменьшить время поиска оптимума. В случае если целевая функция не зависит от простоя автомобиля перед посещением следующего пункта назначения, то такое решение совпадает с оптимумом исходной задачи.
+
+
+In the paper ....
 }
 
 %%%%%%%%%%%%%%% To define new section use a command \subsection
 % We are defining "Introduction" here
-\subsection{Введение}
+\subsection{Introduction}
 %%%%% Paragraph text. To separate paragraphs use empty lines.
-Задача маршрутизации с жесткими временными ограничениями принадлежит к классу NP трудных\cite{VRPTW}, для решения которых широко применяются метаэвристические алгоритмы, в частности различные модификации алгоритма вероятностного поиска с запретами \cite{Tabu_search}. Данные алгоритмы позволяют находить качественные решения, однако при решении динамических задач маршрутизации, для которых время нахождения оптимума является критическим, малопригодны. Если  провести анализ исходных данных задачи, то часто  возникает ситуация, что граф имеет статическую структуру в не зависимости от временных ограничений и задачу можно решить за полиномиальное время \cite{Assignment_Problems}. Такое решение можно использовать, как нижнюю границу при поиске решения исходной задачи. А в случае, когда простой автомобиля перед посещением следующего клиента не влияет на целевую функцию, то такое решение совпадает с оптимумом.  
+ The VRP \cite{VRPTW} ... 
 
-\subsection{Постановка задачи}
-Пусть $C,dim(C)=n$ – множество транспортных средств, $Q,dim(Q)=m$ – множество заявок, полученных от клиентов на текущий момент времени.
+\subsection{Problem Statement}
+Let $C,dim(C)=n$ is a set of vehicles and $Q,dim(Q)=m$ is a set of requests received from customers at the current time.
 
-Предположим, что известна следующая информация о транспортных средствах из множества $C$: \\
-$P_c$ -- местоположение транспортного средства $c \in C$;\\
-$L_c$ -- грузоподъемность транспортного средства $c \in C$.
+Suppose that the following information is known about vehicles from set $C$: \\
+$\vec{P}_c$ -- vehicle position, $c \in C$;\\
+$L_c$ -- vehicle capacity, $c \in C$.
 
-Пусть $S$ -- множество отправителей, $dim(S) = dim(Q) = m$), $R$ -- множество получателей, $dim(R) = dim(Q) = m$. Тогда каждая клиентская заявка $q \in Q$ включает в себя следующую информацию:\\
-$s_q$ -- отправитель груза, $s \in S$; \\
-$r_q$ -- получатель груза, $r \in R$; \\
-$P_{s_q}$ -- местоположение отправителя груза;\\
-$P_{r_q}$ -- местоположение получателя груза; \\
-$w_q$ -- груз, который требуется доставить от отправителя к получателю; \\
-$[t_{s}^{q}, t_{s}^{q}+ \Delta{t_{s}^{q}}]$ -- временное окно, в течении которого требуется забрать груз у отправителя;\\ 
-$[t_{r}^{q}, t_{r}^{q}+ \Delta{t_{r}^{q}}]$ -- временное окно, в течении которого требуется доставить груз получателю.
+Let $S$ is a set of senders, ($dim(S) = dim(Q) = m$), $R$ is a set of receivers, $dim(R) = dim(Q) = m$. Then each client request $q \in Q$ includes the following information:\\
+$s_q$ -- a sender of client shipment, $s \in S$; \\
+$r_q$ -- a receiver of client shipment, $r \in R$; \\
+$\vec{P}_{s_q}$ -- sender position;\\
+$\vec{P}_{r_q}$ -- receiver position; \\
+$w_q$ -- client shipment that is required to deliver from the sender to the recipient; \\
+$[t_{s}^{q}, t_{s}^{q}+ \Delta{t_{s}^{q}}]$ -- the time window within which worker must to pick up the goods from the sender;\\ 
+$[t_{r}^{q}, t_{r}^{q}+ \Delta{t_{r}^{q}}]$ -- the time window within which worker must deliver the goods to the receiver.
  
-Таким образом, каждую заявку можно представить в виде кортежа:
+Thus, each application can be represented as a tuple:
 \begin{equation}
-\forall q \in Q: \exists q = (s_q,r_q, P_{s_q}, P_{r_q}, w_q, t_{s}^{q}, \Delta{t_{s}^{q}}, t_{r}^{q}, \Delta{t_{r}^{q}})
+\forall q \in Q: \exists q = (s_q,r_q, \vec{P}_{s_q}, \vec{P}_{r_q}, w_q, t_{s}^{q}, \Delta{t_{s}^{q}}, t_{r}^{q}, \Delta{t_{r}^{q}})
 \end{equation}
-Для оценки стоимости передвижения между пунктами назначения определена функция стоимости $\Omega$: 
+To estimate the cost of transportation between destinations defined cost function $\Omega$:
 \begin{equation}
-\forall i,j \in S \cup R: \exists \Omega_{i,j} = \Omega(P_i,P_j)
+\forall i,j \in S \cup R: \exists \Omega_{i,j} = \Omega(\vec{P}_i,\vec{P}_j)
 \end{equation}
 
-Необходимо составить оптимальные маршруты передвижения транспортных средств для перевоза грузов от отправителя к получателю для всех клиентских заявок.
+Necessary to construct the optimal routes of vehicles movement for the transportation of goods from the sender to the receiver for all client requests.
 
-\subsection{Дискретная модель}
-Пусть множество $V=C\cup{S}\cup{R}$ -- узлы ориентированного графа. Зададим последовательность неизвестных матриц $\{X^k\}^n_{k=1}$, элементы  которых принимают следующие значения:
+\subsection{Discrete model}
+Routing problem can be represented as a directed graph $G=G(V,E)$. The set $V=C\cup{S}\cup{R}$ -- nodes of the graph $G$, consisting of elements of vehicles, senders and receivers. $E$ -- dynamic set of arcs of the graph $G$, such that:
+\begin{equation}
+\forall e(X) \in E: e(X) = (v_i,v_j), \exists v_i \in V, v_j \in V/C
+\end{equation}
+
+Let $\{X^k\}^n_{k=1}$ is a sequence of variable matrices for each vehicle $k \in C$. Elements of the matrices take the following values:
 \begin{equation}
   x^{(k)}_{i,j} = 
     \begin{cases}
-	  1,&\text{авт. $k$ движется из $i$-го узла в $j$-й, 
-	           $i\in{C}\cup{Q}\cup{D}, j \in Q\cup{D}$ }\\
-	  0,&\text{в противном случае.}
+	  1,&\text{the vehicle $k \in C$ moves from $i$ node to the $j$}\\
+	  0,&\text{otherwise.}
     \end{cases}
 \end{equation}
+where: $i\in{V/C \cup {k}}, j \in V/C$.
+
+Let us introduce the vector  of variables $ \vec{Y}  ^ k(X) $ for each vehicle $ k \ in C $. Vector elements have the following values:
+\begin{equation}
+\vec{y}^{(k)}_{j}(X) = 
+\begin{cases}
+1,&\text{the request $j \in Q$ is processed by vehicle $k \in C$}\\
+0,&\text{otherwise.}
+\end{cases}
+\end{equation}
+where: $i\in{V/C \cup {k}}, j \in V/C$.
 
 
+Let $t^k_j(X^{(k)})$ -- arrival time of the vehicle $k \in C$ at the destination $j \in S \cup R$. 
 
-
-Целевая функция примет следующий вид:
+The objective function takes the following form:
 \begin{equation} \label{main_objective}
   F(X) = 
     \sum_{k \in C}
      \sum_{i,j\cup{V}} 
-     x_{ij}^{k}\cdot\Omega_{ij}+\sum_{j\in{Q}}\tau(j)
+     \Omega_{ij} \cdot x_{ij}^{(k)} 
      \to min
 \end{equation}
-При ограничениях:
+
+We define constraints on the objective function (\ref{main_objective}), which provided the continuity of routes:
 \begin{align} 
-& \sum_{i\in{V}}x_{ij}^{k}=y_{j,d}^{k}, \forall{k}\in{C}, \forall{j}\in{Q},\forall{d}\in{D}\\
-& sign[\sum_{j\in{Q}}y_{j,d}^{k}]=\sum_{i\in{V}}x_{i,d}^{k}, \forall{k}\in{C}, \forall{d}\in{D}\\
-& y_{j,d}^{k}(\tilde{t}_{j}^{k}-\tilde{t}_{d}^{k})\ge{0}\\
-& \sum_{k \in C}\sum_{j \in Q}x^{(k)}_{i,j} = 1, 
-  \forall i \in C \cup Q, \forall k \in C \label{main_cond_1}\\ 
-& \sum_{j \in Q} ( 
-       x^{(k)}_{k,j} -x^{(k)}_{i,j} ) \geq 0, 
-       \forall i \in Q ,  \forall k \in C \label{main_cond_2}\\
-& \sum_{i \in Q \cup  \{k\}} x^{(k)}_{i,\omega} - 
-  \sum_{j \in Q} x^{(k)}_{\omega,j} = 0, 
-  \forall \omega \in Q ,  \forall k \in C \label{main_cond_3}\\
-&  \sum_{i \in S}\sum_{j \notin S}x^{(k)}_{i,j} > 0, 
-  S=\{s \in Q: \sum_{j \in Q \cup C}x^{(k)}_{j,s}>0 \}  ,\forall k \in C \label{main_cond_4}\\
-& t_j \leq \tilde{t_j} \leq t_j + \Delta t_j, \forall j \in Q, 
-\tilde{t_j} \text {- время прибытия в j-й пункт назначения} \label{main_cond_5}
+& \sum_{k \in C}\sum_{j \in S \cup R}x^{(k)}_{i,j} \leq 1, 
+\forall i \in V \label{main_cond_1}\\
+& \sum_{k \in C}\sum_{i \in S \cup R \cup \{k\} } x^{(k)}_{i,j} = 1, 
+\forall j \in S \cup R \label{main_cond_2}\\
+& \sum_{i \in S \cup R \cup \{k\} } x^{(k)}_{i,\omega} - 
+\sum_{j \in S \cup R} x^{(k)}_{\omega,j} \leq 1, 
+\forall \omega \in S \cup R,  \forall k \in C \label{main_cond_3}\\
+&  \sum_{i \in S \cup R / Z}\sum_{j \in Z } x^{(k)}_{i,j} > 0, 
+Z=\{z \in Z: \sum_{j \in S \cup R}x^{(k)}_{j,z}>0 \}  ,\forall k \in C \label{main_cond_4}
+\end{align}
+
+The restriction (\ref{main_cond_1}) prohibits to a node in the graph $G$ has more than one output arc. The restriction (\ref{main_cond_2}) prohibits to a node has more than one input arc.  The constraint (\ref{main_cond_3}) indicates that the number of input arcs to the node can not be less than the output arcs (this constraint considers the fact that the vehicle can leave the destination only if it has visited this node). The restriction (\ref{main_cond_4}) excludes local loops.
+
+Then next constraints synchronize values of variables $X$ and $\vec{y}$ for each request $q \in Q$ and prohibits the service of receiver before a visit to the sender:
+\begin{align} 
+& x^{(k)}_{s_q} + x^{(k)}_{r_q} = 2 \cdot y^{(k)}_{q}(X), \forall k \in C, q \in Q  \\
+& y^{(k)}_{q}(X) \cdot (\tilde{t}^k_{r_q}(X^{(k)})-\tilde{t}^k_{s_q}(X^{(k)})\ge{0}, \forall k \in C, q \in Q
+\end{align}
+
+Define restrictions for accounting of vehicle capacity and time windows:
+\begin{align} 
+& \sum_{j\in{Q}} \omega_j \cdot y_{j}^{k} \leq L_k, \forall{k}\in{C}\\
+& t_{s}^{q} \leq \tilde{t}^k_{s_q}(X^{(k)} \leq t_{s}^{q}+ \Delta{t_{s}^{q}}, \forall q \in Q, \label{tws_cond} \\
+& t_{r}^{q} \leq \tilde{t}^k_{r_q}(X^{(k)} \leq t_{r}^{q}+ \Delta{t_{r}^{q}}, \forall q \in Q, \label{twr_cond}
 \end{align}
 
 
-\subsection{Анализ исходных данных}
-В случае, когда простой автомобиля перед посещением следующего клиента не влияет на целевую функцию, а именно $\varphi=const=0$, тогда в некоторых случаях временные ограничения могут не влиять на структуру графа и задача сводится к задаче о назначениях. В силу того, что $NP \neq P$, однозначный переход невозможен, но из-за наличия временных ограничений граф задачи может не иметь локальных циклов и в этом случае  ограничения (\ref{main_cond_4}) и (\ref{main_cond_5}) возможно опустить после удаления дуг $(i,j)$ по которым невозможно достижение вершины $j$ в не зависимости от времени прибытия в вершину $i$.
 
-Для того, чтобы проверить возможность такого перехода, введем дополнительные величины. 
-\begin{enumerate}
-\item Учитывая наложенные на целевую функцию ограничения, время прибытия в $j$–й пункт назначения равно:
-\begin{equation} \label{t_j_input}
-   \exists h_i \in [0,1] : \tilde{t_i} = t_i + h_i \cdot \Delta t_i
-\end{equation}
+\subsection{Description of the Algorithm}
 
-\item Введем матрицу $U$, элементы которой показывают в количественной форме нарушение временного окна:
-\begin{equation} \label{matrix_U}
- U(\vec{h}) : u_{i,j} = 
-    \begin{cases}
-	  0, i=j, \\
-      t_i + h_i \cdot \Delta t_i + \omega_i + t_{i,j} - t_j - \Delta t_j, i \neq j
-    \end{cases}   
-\end{equation}
-\end{enumerate}
+	
+\begin{algorithm}[H]
+	\textbf{function TabuSearch}($x^0,l,p,N_{stop}$) \\
+	// Initialize variables:	\\
+	$x^{opt} = x^0$;
+	$F^{opt} = F^0$;
+	$\phi^{0} =  \emptyset$;
+	$i=0;s=0$; \\
+	\While{the breakpoint is not triggered }{
+	   $N_l = N_l(x^i,\phi^i,p) $; \\
+		\eIf{$N_l \ne   \emptyset $}{
+			$ x^{i+1} = x^i; i = i + 1;$ \\
+			\textbf{continue;}
+		}
+		{
+			// find optimum into the neighbord $N_l$: \\
+			$ x^{i+1} : F(x^{i+1}) = min\{ F(y): y \in N_l \}$;
+		} 
 
-Можно сказать, что если элемент матрицы $U(\vec{h}=\vec{1})$ отрицательный, то передвижение между пунктами возможно выполнить в не зависимости от временных ограничений. Поэтому построим граф $G$ для задачи маршрутизации, в котором уже будут учтены ограничения (\ref{main_cond_4}) и (\ref{main_cond_5}), задав следующую матрицу инцидентности:
-\begin{equation} \label{matrix_I}
- I(\vec{h}) : I_{i,j} = 
-    \begin{cases}
-	  0, &\text{если $u_{i,j} \geq 0$,} \\
-      1, &\text{если $u_{i,j}<0$}
-    \end{cases}, i \in C \cup Q, j \in Q
-\end{equation}
-\newtheorem{Def}{Определение} 
-\begin{Def}\label{def_main}
-Если:
-  \begin{enumerate}
-  \item $\varphi=const=0$;
-  \item матрица $I(\vec{0})$ равна матрице $I(\vec{1})$;
-  \item граф $G$, построенный по матрице инцидентности $I(\vec{0})$ не является мультиграфом,
-  \end{enumerate}
- тогда задача маршрутизации с жесткими ограничениями по времени сводится к задаче о назначениях.
-\end{Def}
-Это утверждение вытекает из следующих лемм.
+		\If{$F(x^{i+1}) < F_{opt})$}{
+			$ F_{opt} = F(x^{i+1})$;
+			$ x^{opt} = x^{i+1}$;
+		}
+			
+		
+		$\phi^{i+1} = update(\phi^i)$;\\
+		i = i + 1;\\
+	   
+	}
+	\textbf{return} $x^{opt}$;
+	
+\caption{Pseudo-code for probabilistic tabu-search algorithm.}
+\label{alg:generalGP}
+\end{algorithm}
 
-\newtheorem{Lem}{Лемма}
-\begin{Lem}
-Если матрица $I(\vec{0}) = I(\vec{1})$, тогда $I(\vec{0})=I(\vec{h}), \forall \vec{h}: h_i \in [0,1]$
-\end{Lem}
-Доказательство. 
-Элементы матрицы $I_{i,j}$ не зависят от вектора $\vec{h}$ при $i \in C, j \in Q$, так как вершины из множества C соответствуют местоположениям автомобилей в начальный момент времени и им не заданы временные окна ($\Delta t_i = 0, \forall i \in C$). Остальные элементы матрицы можно представить в виде формулы:
-\begin{equation} 
-I_{i,j}(h_i) = \frac{1 - sign(u_{i,j}(h_i))}{2}
-\end{equation}
-По условию $I(\vec{0}) = I(\vec{1})$, тогда:
+\subsection{Initialization}
 
-\begin{flalign*}
-&\frac{1 - sign(u_{i,j}(0))}{2} =  \frac{1 - sign(u_{i,j}(1))}{2} \Rightarrow
-sign(u_{i,j}(0)) = sign(u_{i,j}(1))&
-\end{flalign*}
-Или:
-\begin{flalign*}
-&\left[\begin{array}{l}
-     \begin{cases}
-	  u_{i,j}(0)>0  \\
-      u_{i,j}(1)>0
-    \end{cases}\\
-    \begin{cases}
-	  u_{i,j}(0)<0  \\
-      u_{i,j}(1)<0
-    \end{cases}
-\end{array}\right.&
-\end{flalign*}
+\subsection{A Method of Forming Solutions Neighborhood}
 
-Функция $u_{i,j}(h_i)$ на промежутке $h_i \in [0,1]$ является монотонно возрастающей, потому что производная $\dd{u_{i,j}(h_i)}{h_i} = \Delta t_i >0$ положительна на всем промежутке. Поэтому:
 
-\begin{flalign*}
-&\left[\begin{array}{l}
-     \begin{cases}
-	  u_{i,j}(0)>0  \\
-      u_{i,j}(1)>0
-    \end{cases} \Rightarrow u_{i,j}(h_i)>0 \\
-    \begin{cases}
-	  u_{i,j}(0)<0  \\
-      u_{i,j}(1)<0
-    \end{cases} \Rightarrow u_{i,j}(h_i)<0
-\end{array}\right.
-\Rightarrow sign(u_{i,j}(0)) = sign(u_{i,j}(h_i)), \forall h_i \in [0,1] &
-\end{flalign*}
-Тогда $sign(u_{i,j}(0)) = sign(u_{i,j}(h_i)) \Rightarrow  I(\vec{h})=I(\vec{0})$. Доказано.
+\subsection{Modification}
+The first generalized diagram is as follows. First, the set of solutions is constructed by Solomon. Then every solution is improved by tabu search and choose the best solution according to the objective function.
+Modification of the scheme is based on the hypothesis of "On a large valley." According to this hypothesis, the average local optima are located much closer to the global than a randomly chosen point. There is a certain concentration of local optima in a small part of the feasible region, which is figuratively called a large valley. If this assumption is true, then it is advisable to remember the best solutions and based on them design new original decision. We use this idea to solve the  Routing Courier Delivery Problem.
 
-\newtheorem{Lem2}{Лемма}
-\begin{Lem}
-Если граф  $G$, построенный по матрице инцидентности $I(\vec{h}=const)$ не является мульграфом, то такой граф не имеет циклов.
-\end{Lem}
-Доказательство(от противного). Пусть дан граф $G(V={C \cup Q}, E)$, построенный по матрице инцидентности  $I(\vec{h}=const)$ и в нем имеется цикл: \begin{align*}
-&E_{cicle}=\{(v_{s_1},v_{s_2}),(v_{s_2},v_{s_3}),...,(v_{s_{k-1}},v_{s_k}),(v_{s_k},v_{s_1})\}
-\end{align*}
-Предположим, что при наличии цикла $E_{cicle}$ в графе $G$ нет дуги $(v_{s_1},v_{s_k})$, т.е. АТС не успеет добраться из вершины $v_{s_1}$ в вершину $v_{s_k}$ не нарушив временные ограничения. Поэтому:
-\begin{equation} \label{error_inequality}
- t_{s_k} + \Delta t_{s_k} <  \tilde{t}_{s_1} + \omega_{s_1} + t_{s_1,s_k}
-\end{equation}
-Согласно предположению о существовании цикла $E_{cicle}$ верно следующее неравенство ( $E_{route}=E_{cicle} / \{(v_{s_k},v_{s_1}) \}$):
-\begin{equation} \label{time_s_k_inequality}
- t_{s_k} + \Delta t_{s_k} > \tilde{t}_{s_{k-1}} + \omega_{s_{k-1}} + t_{s_{k-1},s_k} = \tilde{t}_{s_1} +  \sum_{(i,j) \in E_{route}} (t_{i,j} +  \omega_{s_i}) = A
-\end{equation}
-Пусть передвижение от вершины $v_{s_1}$ в вершину $v_{s_k}$ будет выполняться по дугам $E_{route}$. Тогда:
-\begin{equation} \label{time_route}
- \tilde{t}_{s_1} + \omega_{s_1} + t_{s_1,s_k} \leq \tilde{t}_{s_1} + \omega_{s_1} + \sum_{(i,j) \in E_{route}} t_{i,j} \leq A
-\end{equation}
-Подставим (\ref{time_route}) в (\ref{time_s_k_inequality}):
-\begin{equation} \label{true_inequality}
- t_{s_k} + \Delta t_{s_k} > \tilde{t}_{s_1} + \omega_{s_1} + t_{s_1,s_k}
-\end{equation}
-Пришли к противоречию, следовательно, неравенство (\ref{error_inequality}) неверно. Доказано.
+From these solutions generated population. To do this, first sort by the value of the objective function in ascending order. Each solution gets into the population with a given probability, the probability of selection decreases with increasing atomic number. It then crosses the decisions by the following rule: the first solution is randomly selected route, then the other solutions chosen a route that does not include the customer first route, etc. Other clients added by Solomon in the selected route. Then the process is repeated.
 
-\subsection{Переход к задаче о назначениях}
-Если выполняются правила из определения \ref{def_main}, тогда можно свести исходную задачу к задаче о назначениях.
-
-Введем замену переменных X :
-\begin{equation} \label{y_replace}
-\forall k \in C: ~Y^k = \{ I_{i,j}(0) \cdot x^{(k)}_{i,j} , i \in Q \cup  \{k\} , j \in Q  \}
-\end{equation}
-
-Теперь задачу можно сформулировать таким образом, что ее можно разрешить за полиномиальное время:
-\begin{align} 
-  &F(Y) = 
-    \sum_{k \in C}
-     \sum_{i \in Q \cup  \{k\},j \in Q} 
-     \Omega_{i,j}\cdot y^{(k)}_{i,j})
-     \to min\\
-& \sum_{k \in C}\sum_{j \in Q}y^{(k)}_{i,j} = 1, 
-  \forall i \in C \cup Q, \forall k \in C \label{mod_cond_1}\\ 
-& \sum_{j \in Q} ( 
-       y^{(k)}_{k,j} -y^{(k)}_{i,j} ) \geq 0, 
-       \forall i \in Q ,  \forall k \in C \label{mod_cond_2}\\
-& \sum_{j \in Q \cup  \{k\}} y^{(k)}_{i,\omega} - 
-  \sum_{i \in Q} y^{(k)}_{\omega,j} = 0, 
-  \forall \omega \in Q ,  \forall k \in C \label{mod_cond_3}
-\end{align}
-
-Чтобы получить задачу о назначениях в классическом ее виде, построим на основе графа $G$ двудольный граф $G_b(V_{begin},V_{end},E_b)$ по следующему принципу:
-\begin{enumerate}
-\item $V_{begin} = \{v \in C \cup Q\ : \exists (v,\omega) \in E, \omega \in Q \}$ - состоит из множества вершин, для которых найдется хотя бы одна выходящая дуга из множества E;
-\item $V_{end} = \{v  \in Q\ : \exists (\omega,v) \in E, \omega \in C \cup Q \}$ - состоит из множества вершин, для которых найдется хотя бы одна входящая дуга из множества E;
-\item $E_b = \{(v,\omega) \in E: v \in V_{begin}, \omega \in V_{end} \}$.
-\end{enumerate}
-
-\begin{figure}[h]
-\hfil\includegraphics[height=2.0in]{sign_graph}\hfil
-\caption
-{
-  Пример преобразования графа $G$ в двудольный граф $G_b$.
-}
-\label{aba:fig1}
-\end{figure}
-
-\subsection{Результаты}
-Преобразованную задачу(рис. \ref{aba:fig1}) рекомендуется решать с помощью метода Голдберга и Кеннеди,  основанного на технике масштабирования при переходе к задаче поиска потока минимальной стоимости \cite{Goldberg_Kennedy}. Сложность алгоритма равна $O(\sqrt{n}mlog(nC))$.
-
-В случае, если функция $\varphi(t)$ присутствует в целевой функции, то решение преобразованной задачи может послужить нижней границей, которую можно использовать для отсеивания заведомо худших решений при формировании окрестности вокруг текущего решения в работе вероятностного алгоритма поиска с запретами.
-
-Проверка метода была выполнена на тестовых задачах Кристофидеса, Голдберга  и Тейларда с временными ограничениями, удовлетворяющими условиям, которые были изложены в определении \ref{def_main} \cite{problems_Christofides,problems_Golden,problems_Taillard}.    
-
-\subsection{Выводы}
-Предложены правила перехода от задачи маршрутизации с учетом временных ограничений к задаче о назначениях. Данную технику целесообразно использовать для задач маршрутизации, в которых не учитывается простой автомобиля. Также  метод можно использовать для инициализации метаэвристического алгоритма или в виде более качественной нижней границы для определения оптимума. 
+\subsection{Conclusion}
+Text...
 
 
 \begin{thebibliography}{99}
@@ -276,9 +194,6 @@ sign(u_{i,j}(0)) = sign(u_{i,j}(1))&
 \bibitem{problems_Taillard}  E. Taillard. VRP benchmarks.\\ http://mistic.heig-vd.ch/taillard/problemes.dir/vrp.dir/vrp.html, 1993.
 \end{thebibliography}
 
-\subsection{Автор}
-\author{Роман Александрович Шафеев}{магистр 2-го года обучения, факультет информатики и управления, Национальный технический университет <<Харьковский политехнический институт>>, Харьков, Украина}
-{rs@premiumgis.com}
 
 
 \end{document} 
