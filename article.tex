@@ -20,7 +20,7 @@ R.~Shafeyev , L.~Lyubchik
 \abstract{
 %%%%%%%%%%%%%%% You have to insert abstract of your paper here
 
-The paper considers the routing courier delivery problem with the service time for which the discrete model was constructed and the calculation scheme based on metaheuristic algorithm. The efficiency  of the proposed algorithm‘s scheme has been tested on a large-scale problems, generated on the basis of different classes known model routing problems.
+The paper considers the routing courier delivery problem with the service time for which the discrete model was constructed and the calculation scheme based on tabu search algorithm. The efficiency  of the proposed algorithm‘s scheme has been tested on a large-scale problems, which were generated on the basis of different classes known model routing problems.
 
 }
 
@@ -28,10 +28,12 @@ The paper considers the routing courier delivery problem with the service time f
 % We are defining "Introduction" here
 \subsection{Introduction}
 %%%%% Paragraph text. To separate paragraphs use empty lines.
-In this study, we consider a static vehicle routing problem with time windows. This variant of the routing problem is a common problem in the courier delivery industry. 
+In the research we consider a static vehicle routing problem with time windows. This variant of the routing problem is a common problem in the courier delivery industry. Effective solution to this problem affects the quality of services provided by the company, as well as the magnitude of potential losses caused by the excess of the agreed terms of delivery. The proposed solution to the problem is based on the automation of the process of planning the route and involves the use of distributed information systems for the possible implementation of these approaches in practice. Another important criterion for good transport plan are low transport costs, which affect the cost of services.
 
-The resulting solution is a master plan that solves the problem, and takes into account the daily events that take place according to plan. We evaluated the model and strategy decisions through simulation of randomly generated test data and known problems.
+The Routing Courier Delivery Problem with time windows requires that a set of vehicles satisfy a collection of customer requests. Each client request requires the use of a single vehicle to receive and load a specified amount of goods at one source location(sender) and to deliver them to destination location(receiver). All requests must be performed without violating either the vehicle capacity or the customer time window. The solution is a master plan that solves the problem, and takes into account the daily events that take place according to plan. In this paper, we present a discrete model and a modified tabu search algorithm  to solve the  Courier Delivery Problem with time windows. 
 
+In order to validate our strategies decisions technique effectiveness, we have constructed a new set of benchmark problems for the pickup and delivery problem with time windows based on which were generated on the basis of different classes known model routing problems. Computational results substantiate the solution quality and efficiency of our modified tabu search algorithm.
+ 
 
 \subsection{Problem Statement}
 Let $C,dim(C)=n$ is a set of vehicles and $Q,dim(Q)=m$ is a set of requests received from customers at the current time.
@@ -64,7 +66,7 @@ Necessary to construct the optimal routes of vehicles movement for the transport
 	\hfil\includegraphics[height=4.0in]{images/scheme}\hfil
 	\caption
 	{
-		Example of Routing Delivery Problem.
+		Example of the Routing Delivery Problem.
 	}
 	\label{aba:fig1}
 \end{figure}
@@ -165,43 +167,45 @@ To ensure that the algorithm did not stop in a local minimum, and passed from on
 \end{align}	
 called the list of prohibitions. When building the list of all pairs of different and a pair of $(u_\lambda,u_\omega),\lambda \ne \omega$ does not prohibit the movement of pairs $(u_\lambda,u_\lambda)$ and $(u_\omega,u_\omega)$. When $l>2$ similarly constructed three coordinates, fours, etc. A set of non-restricted vectors denote by $N_l(\vec{u^i},\vec{\phi^i})$. In order that the search was effectively, it is advisable to use small values $h$ and to control this parameter in the course of the algorithm.
 
-Denote by $N_l(\vec{u^i},\vec{\phi^i},p)$ probabilistic edge that goes from a deterministic $N_l(\vec{u^i},\vec{\phi^i})$ as follows. Each vector $\vec{v} \in N_l(\vec{u^i},\vec{\phi^i})$ with probability $p$ included in the neighborhood $N_l(\vec{u^i},\vec{\phi^i},p)$ regardless of other points. Note that this set may be empty or contain only one point. The General scheme of the probabilistic search algorithm with a list of prohibitions referred to as pseudo-code.
-
-As the stopping criterion is based on the total number of steps $N_stop$, in the course of which does not change the value $F_{opt}$. Values $l,p,h$ are the control parameters of the algorithm. Their choice depends on the problem dimension.
-
 \begin{algorithm}[H]
 	\textbf{function TabuSearch}($u^0,l,p,h$) \\
 	// Initialize variables:	\\
-	$u^{opt} = u^0$;
-	$F^{opt} = F^0$;
-	$\phi^{0} =  \emptyset$;
-	$i=0$; \\
+	$u^{opt} = u^0$
+	$F^{opt} = F^0$
+	$\phi^{0} =  \emptyset$
+	$i=0$ \\
 	\While{the breakpoint is not triggered }{
-	   $N_l = N_l(u^i,\phi^i,p,h) $; \\
+	   $N_l = N_l(u^i,\phi^i,p,h) $ \\
 		\eIf{$N_l \ne   \emptyset $}{
-			$ u^{i+1} = u^i; i = i + 1;$ \\
-			\textbf{continue;}
+			$ u^{i+1} = u^i$ \\
+			$i = i + 1$ \\
+			\textbf{goto} 5
 		}
 		{
 			// find optimum into the neighbord $N_l$: \\
-			$ u^{i+1} : F(u^{i+1}) = min\{ F(y): y \in N_l \}$;
+			$ u^{i+1} : F(u^{i+1}) = min\{ F(y): y \in N_l \}$
 		} 
 
 		\If{$F(u^{i+1}) < F_{opt})$}{
-			$ F_{opt} = F(u^{i+1})$;
-			$ u^{opt} = u^{i+1}$;
+			$ F_{opt} = F(u^{i+1})$ \\
+			$ u^{opt} = u^{i+1}$
 		}
 			
 		
-		$\phi^{i+1} = update(\phi^i)$;\\
-		i = i + 1;\\
+		$\phi^{i+1} = update(\phi^i)$\\
+		i = i + 1\\
 	   
 	}
-	\textbf{return} $u^{opt}$;
+	\textbf{return} $u^{opt}$
 	
 \caption{Pseudo-code for probabilistic tabu-search algorithm.}
 \label{alg:TabuSearch}
 \end{algorithm}
+
+Denote by $N_l(\vec{u^i},\vec{\phi^i},p)$ probabilistic edge that goes from a deterministic $N_l(\vec{u^i},\vec{\phi^i})$ as follows. Each vector $\vec{v} \in N_l(\vec{u^i},\vec{\phi^i})$ with probability $p$ included in the neighborhood $N_l(\vec{u^i},\vec{\phi^i},p)$ regardless of other points. Note that this set may be empty or contain only one point. The General scheme of the probabilistic search algorithm with a list of prohibitions referred to as pseudo-code in algorithm \\
+scheme \ref{alg:TabuSearch}.
+
+As the stopping criterion is based on the total number of steps $N_stop$, in the course of which does not change the value $F_{opt}$. Values $l,p,h$ are the control parameters of the algorithm. Their choice depends on the problem dimension.
 
 In the presented scheme, it was assumed that the value of $h$ (the dimension of the deny list) does not change in the course of the algorithm. This creates certain difficulties in the implementation of the scheme, as it is unknown how long is to take a list of prohibitions. At small $h$ the algorithm can start walking cycle. At large $h$ the search becomes inefficient. One of the simple rules regulating the length of the list of prohibitions is the following.
 
@@ -233,18 +237,8 @@ As a result the client $u^*$ is added to the current route $k$ the position betw
 The most difficult part of the local search algorithm with the prohibitions are viewing the surroundings $N_l(\vec{u^i},\vec{\phi^i})$ of the current point $\vec{us^i}$. For even larger values of $l$ and the parameter $p=1$ in the outskirts plenty of points. But due to the nature of the model's constraints many of them are not the solution. Therefore, due to the nature of the considered discrete tasks, we used the following method of determining the area. On the $i$ step of the algorithm compiled from routes pair: $\{R_1,R_2\},\{R_1,R_3\},\dots,\{R_1,R_n\},\{R_2,R_1\}, \{R_2,R_3\},\dots,\{R_2,R_n\},\dots,\{R_{n-1},R_{n}\}$. Then over each pair of routes is performed in moving requests. The resulting displacement vectors $\vec{u}$ are neighborhood $N_l(\vec{u^i},\vec{\phi^i})$. For moving  we used change-move  and swap-move operations.
 
 
-\subsubsection{The optimization of the algorithm parameters}
-
-From these solutions generated population. To do this, first sort by the value of the objective function in ascending order. Each solution gets into the population with a given probability, the probability of selection decreases with increasing atomic number. It then crosses the decisions by the following rule: the first solution is randomly selected route, then the other solutions chosen a route that does not include the customer first route, etc. Other clients added by Solomon in the selected route. Then the process is repeated.
-
 \subsection{Analysis of the algorithm parameters}
 Modified tabu search algorithm has 3 main parameters: $p$ -- the probability of hitting solutions in a neighborhood, $h$ -- size of the list of prohibitions and $N_{neighbors}$ -- accepted count limit of size of neighbordhood $N_l(\vec{u})$. For the experiments, we constructed the test tasks on the basis of the capacity routing problems developed by Breedam, Fisher, Christofides and Eilon. To determine trends in time and cost of the decision to use exponential smoothing by a factor of $0.1$.
-
-In the first computational experiment we made finding the best solutions for different values of the tabu size parameter $h \in [0, 40]$ (pict. 1 an pict. 2). In this experiment we use two different breakpoint strategies: 
-\begin{enumerate}
-	\item $StepCount$ termination strategy --  terminates when an amount of steps has been reached;
-	\item $TimeMillisSpent$ termination strategy -- terminates when an amount of time has been used.
-\end{enumerate}
 
 \begin{figure}[h]
 	\hfil\includegraphics[height=3.0in]{images/tabuSize_stepCount}\hfil
@@ -252,8 +246,14 @@ In the first computational experiment we made finding the best solutions for dif
 	{
 	  The dependence of the quality of solutions on the size of the tabu list when using $ StepCount $ termination strategy
 	}
-	\label{aba:fig1}
+	\label{aba:fig2}
 \end{figure}
+
+In the first computational experiment we made finding the best solutions for different values of the tabu size parameter $h \in [0, 40]$ (pict. 1 an pict. 2). In this experiment we use two different breakpoint strategies: 
+\begin{enumerate}
+	\item $StepCount$ termination strategy --  terminates when an amount of steps has been reached;
+	\item $TimeMillisSpent$ termination strategy -- terminates when an amount of time has been used.
+\end{enumerate}
 
 As should have been expected, for large values of the parameter a jam occurs in local optimum due to the large number of restrictions of movement in space. Otherwise if you select a too small tabu size, algorithm can still get stuck in a local optimum. 
 \begin{figure}[h]
@@ -262,7 +262,7 @@ As should have been expected, for large values of the parameter a jam occurs in 
 	{
 	  The dependence of the quality of solutions on the size of the tabu list when using $ TimeMillisSpent $ termination strategy
 	}
-	\label{aba:fig1}
+	\label{aba:fig3}
 \end{figure}
 
 In the second experiment we built a relationship between the number $N_{neighbors}$ of viewed solutions neighborhood $N_l(\vec{u})$ using $TimeMillisSpent$ termination strategy. 
@@ -272,7 +272,7 @@ In the second experiment we built a relationship between the number $N_{neighbor
 	{
 	  The dependence of the quality of solutions on the neighborhood size when using $ TimeMillisSpent $ termination strategy
 	}
-	\label{aba:fig1}
+	\label{aba:fig4}
 \end{figure}
 
 
@@ -282,95 +282,167 @@ The first generalized diagram is as follows. First, the set of solutions is cons
 
 Modification of the scheme is based on the hypothesis of "On a large valley." According to this hypothesis, the average local optima are located much closer to the global than a randomly chosen point. There is a certain concentration of local optimum in a small part of the feasible region, which is figuratively called a large valley. If this assumption is true, then it is advisable to remember the best solutions and based on them design new original decision. We use this idea to solve the  Routing Courier Delivery Problem.
 
+We proceed to the description of the algorithm in scheme \ref{alg:constructSolution}. Let $U^{opt}$ is a sorted array of optimal solutions by value of the objective function ascending,  ie:
+\begin{equation} \label{u_sorted}
+F(u^{opt}_1) \leq F(u^{opt}_2) \leq \ldots < F(u^{opt}_i) \leq \ldots \leq F(u^{opt}_{sizeof(U^{opt})})
+\end{equation}
+Each solution $u^{opt}_i$ gets into the population with a given probability $p^i_u$, the probability of selection decreases with increasing sequence number:
+\begin{equation} \label{p_sorted}
+p^1_u = 1 > p^2_u > \ldots > p^i_u> \ldots   > p^{sizeof(U^{opt})}_u,  p^{sizeof(U^{opt})}_u > 0
+\end{equation}
+
 \begin{algorithm}[H]
 
 	\textbf{function constructSolution}( $U^{opt}, p_u, n^{min}_s$) \\
-	// $U^{opt}$ -- an ordered set of optimal solutions \\
+	// $U^{opt}$ -- a sorted set array optimal solutions \\
 	
 	
 	\If{$ sizeof(U^{opt}) <  n^{min}_s$}{
 		// construct solution using heuristics(for example, Solomon alg.)\\
-		$u^0 = heuristicsConscruction();$
-		return $u^0$;
+		$u^0 = heuristicsConscruction()$ \\
+		\textbf{return} $u^0$
 	}
 	
 	\While{$i < sizeof(U^{opt})$}{
 		\If{$random(0.0,1.0) > p^i_u$}{
-		   i = i + 1; \\
-		   goto 7;
+		   i = i + 1 \\
+		   \textbf{goto} 8
 		}
-		$R = $randomly select a route from $u^{opt}_i$ solution;
-		$u^0 = u^0 \cup R$;
-		i = i + 1;\\
+		$R_i = $randomly select a route from $u^{opt}_i$ solution;
+		$u^0 = u^0 \cup R_i$
+		i = i + 1\\
 		
 	}
-	\textbf{return} $u^0$;
+	
+	\If{$u^0 is not complete$}{
+	   	$u^0 = heuristicsConscruction(u^0)$
+	}
+	
+	\textbf{return} $u^0$
 	
 	\caption{Pseudo-code for heuristics construction algorithm.}
 	\label{alg:constructSolution}
 \end{algorithm}
 
-Let $\vec{\psi_i} = (\psi^1_i,\psi^2_i,\psi^3_i) = (\tilde{l_i},\tilde{p_i},\tilde{l_h})$ -- a set of values of TabuSearch configuration parameters which was using for solving the problem in the step $i$.
+It then crosses solutions by the following rule: with the first solution is randomly selected route $R_1$. Then another solution is selected from a route $R_2$ that does not include client requests from the first  route etc. If the client requests were not included in the solution $u^0$, then these requests are added by the construction heuristics algorithm (for example, Solomon algorithm).
 
-Let $[\psi^j_{begin}, \psi^j_{end}]$ -- an optimal interval of the TabuSearch $j$ -parameter. (For example: if $j=3$, then: $[\psi^31_{begin}, \psi^3_{end}]= [h_{begin}, h_{end}] = [10, 40] $). These intervals are initial data and they are set in the initialization block. 
+
+Now we describe the primary function $SolveCDP()$ of the modified algorithm presented in pseudocode form in Scheme \ref{alg:modTabuSearch}. In this function using a loop is a sequential formation of an array of the best solutions $U^{opt}$ by means TabuSearch algorithm.   
+
+Based on the results of the experiments described in the preceding section, we decided to set the parameters of the algorithm are not fixed values, but as a random variable of predetermined period. For example, the size of the tabu list $h$ is defined as the interval $[10,35]$(see pict. \ref{aba:fig2} and  pict. \ref{aba:fig3}) and the neighbordhood size $l=N_{neighbordhood}$ is defined as the interval $[600\cdot n,850\cdot n]$, where $n$ -- problem size (see pict. \ref{aba:fig4} ).
+
+Let $\vec{\psi_i} = (\psi^1_i,\psi^2_i,\psi^3_i) = (\tilde{l_i},\tilde{p_i},\tilde{l_h})$ -- a set of values of the TabuSearch configuration parameters which was using for solving the problem in the step $i$.
+
+Let $[\psi^j_{begin}, \psi^j_{end}]$ -- an optimal interval of the TabuSearch $j$ -parameter. (For example: if $j=3$, then: $[\psi^3_{begin}, \psi^3_{end}]= [h_{begin}, h_{end}] = [10, 40] $). These intervals are initial data and they are set in the initialization block. 
+
+The configuration parameters  $\psi^j_i $ are randomly selected from the interval $[\psi^j_{begin}, \psi^j_{end}]$ according to a distribution law. We proposed to build the distribution density $f_j(\psi^j_i)$ of the random variable $\psi^j_i$ as follows. At first, we define anchor points:
+ 
+ \begin{equation} \label{anchor_points}
+     \rho^j_i =  \dfrac{F(u^{opt}_1)}{avg[F(u^{opt}_k)]}, \forall k: \psi^j_k = \psi^j_i
+ \end{equation}
+ The number of anchor points $n_{\rho}$  is smaller than the set of optimal solutions, because a set of reference anchor points are removed the same point $(n_{\rho} \leq  n_u)$.
+ 
+The main idea is that the distribution density should be larger at those points (parameters $\psi^j_i$) in which high quality solutions than the points at which the low quality of solutions.
+Therefore, we presented the distribution function $f_j(z)$ as a sum of kernel functions:
+ \begin{equation} \label{dist_density}
+ f_j(z) = \alpha_j * \sum\limits_{i=1}^{n_{\rho}}  \rho^j_i * K(z -  \psi^j_i)
+ \end{equation}
+ where: $K(x)$ -- kernel function, $ \alpha$ -- a normalizing parameter
+ 
+ We have chosen as the kernel the function of parabolic type(known as an Epanechnikov function),  because during the experiments the best results were obtained using this function:
+ \begin{equation} \label{dist_density}
+  K(z) = 3/4 \cdot (1-z^2)
+ \end{equation}
+ 
 
 \begin{algorithm}[H]
 	\textbf{function SolveCDP}( $n^{min}_s$) \\
 	// Initialize variables:	\\
 	
-	$\psi = \emptyset$;
-	$p_u = \emptyset$;
-	$U^{opt} = \emptyset$;
-	$i=0$; \\
+	$\psi = \emptyset$,
+	$p_u = \emptyset$,
+	$U^{opt} = \emptyset$,
+	$i=0$ \\
 	
 	\While{the breakpoint is not triggered }{
 		// set TabuSearch parameters \\
-		\For{$j=1..3$}{
+		\For{$j=1 \ldots 3$}{
 	  	// $f_j$ -- the density distribution of the random \\
 	  	// variable $\psi^j$ (TabuSearch parameter $l,p $ or $ h$) \\
-	  	$\psi^j_i = random(\psi^j_{begin}, \psi^j_{end}, f_j); $
+	  	$\psi^j_i = random(\psi^j_{begin}, \psi^j_{end}, f_j) $
 	  	}
 	  	
 		// Make solution using euristics construction algorithms \\
 		$u^0 = constructSolution(U^{opt} ,n^{min}_s)$ 
 		
 		// Improve solution $u^0$ using TabuSearch algorithm 
-		$u^{opt}_i = TabuSearch(u^0, \vec{\psi_i});$ \\
+		$u^{opt}_i = TabuSearch(u^0, \vec{\psi_i})$ \\
 		
-		$U^{opt}  = U^{opt} \cup \{u^{opt}_i\};$ \\
+		$U^{opt}  = U^{opt} \cup \{u^{opt}_i\}$ \\
 		
 		// Sort ascending optimums $U$ of the objective function \\
-		$U^{opt} = sort(U^{opt});$\\
-		$p^{i+1}_u = update(p^i_u)$;\\
+		$U^{opt} = sort(U^{opt})$\\
+		$p^{i+1}_u = update(p^i_u)$\\
 		
-		i = i + 1;\\
+		i = i + 1\\
 		
 	}
-	\textbf{return} $u^{opt}_1$;
+	\textbf{return} $u^{opt}_1$
 	
 	\caption{Pseudo-code for modified tabu-search algorithm.}
 	\label{alg:modTabuSearch}
 \end{algorithm}
 
-\subsection{Conclusion}
-In the process, has been studied and implemented tabu search algorithm to solve the static problem with time constraints. Modification of the algorithm to optimize the computational scheme. Modified algorithm gave the best solutions in terms of the balance between the number of vehicles and the distance traveled. such a feature of this algorithm can be used for decision support in intelligent systems. In practice, the more advantageous to use more vehicles if this will reduce the time to use them, this will reduce fuel costs and depreciation of transport;
+ The parameter $\alpha_j$ was introduced in the density function to perform the normalization condition:
+ \begin{equation} \label{norm_cond}
+ \int\limits_{\psi^j_{begin}}^{\psi^j_{end}} f_j(z)dz = 1  =>  (\alpha_j)^{-1} = \sum\limits_{i=1}^{n_{\rho}} \rho^j_i \cdot  \int\limits_{\psi^j_{begin}}^{\psi^j_{end}} K(z -  \psi^j_i) dz 
+ \end{equation}
 
-The analysis of the parameters of implemented algorithms allowed us to determine their optimal values for this class of routing problems. With the modified algorithm was found solutions of model problems, which in most cases have an acceptable deviation from the global optimum;
+ The parameter $\alpha_j$ can be written in explicit form:
+  \begin{equation} \label{norm_cond}
+ \begin{split}
+ (\alpha_j)^{-1} & = \dfrac{3}{4} \cdot \sum\limits_{i=1}^{n_{\rho}} \rho^j_i \cdot [(1 - (\psi^j_i)^2) \cdot (\psi^j_{end} - \psi^j_{begin}) + \\
+ & + \psi^j_i \cdot ((\psi^j_{end})^2 - (\psi^j_{begin})^2) - 1/3 \cdot (\psi^j_{end})^3 - (\psi^j_{begin})^3)]
+ \end{split}
+ \end{equation}
+ 
+ In figure \ref{aba:fig5} the results of an experiment in which  were presented a dependence of the quality of the solutions obtained by the classical and modified algorithms and  the breaking point time. As seen from the graph, with an increase in operating time of the computational scheme, the quality of solutions obtained using the modified algorithm is growing faster than using classical Tabu Search algorithm.
+ 
+ \begin{figure}[h]
+ 	\hfil\includegraphics[height=2.0in]{images/acceptedCountLimit}\hfil
+ 	\caption
+ 	{
+ 		The dependence of the quality of solutions and  the breaking point time using $ TimeMillisSpent $ termination strategy
+ 	}
+ 	\label{aba:fig5}
+ \end{figure}
+ 
+ 
+\subsection{Conclusion}
+During the research has been investigated and implemented tabu search algorithm to solve the Static Routing Courier Delivery problem with time constraints. Also a modified algorithm was developed  based on the Tabu Search algorithm to improve the quality of the solutions. Modified algorithm gave the best solutions in terms of the balance between the number of vehicles and the cost traveled.  In practice this algorithm can be used for decision support in intelligent systems for improving the quality of customer service and for reducing waiting the time to use vehicle, this will reduce fuel costs and depreciation of transport.
+
+The analysis of the parameters of implemented algorithms allowed us to determine their optimal values for this class of routing problems. With the modified algorithm was found solutions of model problems, which in most cases have an acceptable deviation from the global optimum.
 
 
 \begin{thebibliography}{99}
 %In brackets we writes the name which is used for referencing.
 
+\bibitem{RCDS} F.~Ordonez, Chen Wang, A New Approach for Routing Courier Delivery Services //METRANS Transportation Center:University of Southern California
+Los Angeles,  2012, 81--115.
+
 \bibitem{VRPTW} T.~Babb, Pickup and Delivery Problem with Time Windows // Coordinated Transportation Systems: The State of the Art. Department of Computer Science University of Central Florida Orlando, Florida, 2005, 38 p.
 
-\bibitem{Tabu_search} O.~Braysy, M.~Gendreau, Vehicle Routing Problem with Time Windows, Part I: Route Constuction and local algorithms // Transportation science Vol.39 No. 1, 2005, p. 104-118.
+\bibitem{DELIVERY_2000} W~Barnes, Solving the pickup and delivery problem with time windows using reactive tabu search // Transportation Research Part B: Methodological, Vol. 34 Issue 2, 2000, p. 107--121.
+% http://www.sciencedirect.com/science/article/pii/S0191261599000168
 
-\bibitem{Assignment_Problems} E.~Rainer, Assignment problems, 2009, 402 p. 
+\bibitem{Tabu_search} O.~Braysy, M.~Gendreau, Vehicle Routing Problem with Time Windows, Part I: Route Constuction and local algorithms // Transportation science Vol.39 No. 1, 2005, p. 104-118.
 
 \bibitem{Goldberg_Kennedy} V.~Goldberg, R.~Kennedy, An Efficient cost scaling algotirhm for the assignment problem, Math. Program., 1995, p. 153--177.  
 
 \bibitem{problems_Christofides}  N. Christofides, S. Eilon, An algorithm for the vehicle dispatching problem //Operational Research Quarterly, 20, 1969, p. 309–318.
+
 \bibitem{problems_Golden}  B. Golden, E. Wasil, J. Kelly, I-M. Chao. The impact of metaheuristics on solving the vehicle routing problem: Algorithms, problem sets, and computational results. In T. Crainic and G. Laporte, editors // Fleet Management and Logistics, Kluwer, Boston, 1998 p. 33–56.
+
 \bibitem{problems_Taillard}  E. Taillard. VRP benchmarks.\\ http://mistic.heig-vd.ch/taillard/problemes.dir/vrp.dir/vrp.html, 1993.
 \end{thebibliography}
 
