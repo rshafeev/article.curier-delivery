@@ -249,32 +249,32 @@ Modified tabu search algorithm has 3 main parameters: $p$ -- the probability of 
 	\label{aba:fig2}
 \end{figure}
 
-In the first computational experiment we made finding the best solutions for different values of the tabu size parameter $h \in [0, 40]$ (pict. 1 an pict. 2). In this experiment we use two different breakpoint strategies: 
+In this experiment we use two different breakpoint strategies: 
 \begin{enumerate}
 	\item $StepCount$ termination strategy --  terminates when an amount of steps has been reached;
-	\item $TimeMillisSpent$ termination strategy -- terminates when an amount of time has been used.
+	\item $TimeSpent$ termination strategy -- terminates when an amount of time has been used.
 \end{enumerate}
 
-As should have been expected, for large values of the parameter a jam occurs in local optimum due to the large number of restrictions of movement in space. Otherwise if you select a too small tabu size, algorithm can still get stuck in a local optimum. 
+As should have been expected, for large values of the parameter a jam occurs in local optimum due to the large number of restrictions of movement in space. Otherwise if you select a too small tabu size, algorithm can still get stuck in a local optimum. In the first computational experiment we made finding the best solutions for different values of the tabu size parameter from interval $h \in [0, 40]$ (pict. 1 an pict. 2).
 \begin{figure}[h]
-	\hfil\includegraphics[height=2.0in]{images/tabuSize_time}\hfil
+	\hfil\includegraphics[height=2.2in]{images/tabuSize_time}\hfil
 	\caption
 	{
-	  The dependence of the quality of solutions on the size of the tabu list when using $ TimeMillisSpent $ termination strategy
+	  The dependence of the quality of solutions on the size of the tabu list when using $ TimeSpent $ termination strategy
 	}
 	\label{aba:fig3}
 \end{figure}
 
-In the second experiment we built a relationship between the number $N_{neighbors}$ of viewed solutions neighborhood $N_l(\vec{u})$ using $TimeMillisSpent$ termination strategy. 
 \begin{figure}[h]
-	\hfil\includegraphics[height=2.0in]{images/acceptedCountLimit}\hfil
+	\hfil\includegraphics[height=2.2in]{images/acceptedCountLimit}\hfil
 	\caption
 	{
-	  The dependence of the quality of solutions on the neighborhood size when using $ TimeMillisSpent $ termination strategy
+	  The dependence of the quality of solutions on the neighborhood size when using $ TimeSpent $ termination strategy
 	}
 	\label{aba:fig4}
 \end{figure}
 
+In the second experiment (see figure \ref{aba:fig4}) we built a relationship between the number $N_{neighborhood}$ of viewed solutions neighborhood size $N_l(\vec{u})$ using $TimeSpent$ termination strategy. In this experiment we made finding the best solutions for different values of the neighborhood size parameter from interval $N_{neighborhood} \in [750, 850]$ (pict. 1 an pict. 2).
 
 \subsection{Modification}
 
@@ -409,10 +409,10 @@ Therefore, we presented the distribution function $f_j(z)$ as a sum of kernel fu
  In figure \ref{aba:fig5} the results of an experiment in which  were presented a dependence of the quality of the solutions obtained by the classical and modified algorithms and  the breaking point time. As seen from the graph, with an increase in operating time of the computational scheme, the quality of solutions obtained using the modified algorithm is growing faster than using classical Tabu Search algorithm.
  
  \begin{figure}[h]
- 	\hfil\includegraphics[height=2.0in]{images/acceptedCountLimit}\hfil
+ 	\hfil\includegraphics[height=3.0in]{images/tabuSize_time.png}\hfil
  	\caption
  	{
- 		The dependence of the quality of solutions and  the breaking point time using $ TimeMillisSpent $ termination strategy
+ 		The dependence of the quality of solutions and  the breaking point time by classic and modified algorithms using $ TimeSpent $ termination strategy
  	}
  	\label{aba:fig5}
  \end{figure}
@@ -430,10 +430,17 @@ The analysis of the parameters of implemented algorithms allowed us to determine
 \bibitem{RCDS} F.~Ordonez, Chen Wang, A New Approach for Routing Courier Delivery Services //METRANS Transportation Center:University of Southern California
 Los Angeles,  2012, 81--115.
 
-\bibitem{VRPTW} T.~Babb, Pickup and Delivery Problem with Time Windows // Coordinated Transportation Systems: The State of the Art. Department of Computer Science University of Central Florida Orlando, Florida, 2005, 38 p.
+\bibitem{Delivery_Babb_2005} T.~Babb, Pickup and Delivery Problem with Time Windows // Coordinated Transportation Systems: The State of the Art. Department of Computer Science University of Central Florida Orlando, Florida, 2005, 38 p.
 
-\bibitem{DELIVERY_2000} W~Barnes, Solving the pickup and delivery problem with time windows using reactive tabu search // Transportation Research Part B: Methodological, Vol. 34 Issue 2, 2000, p. 107--121.
+\bibitem{Delivery_Barnes_2000} W~Barnes, Solving the pickup and delivery problem with time windows using reactive tabu search // Transportation Research Part B: Methodological, Vol. 34 Issue 2, 2000, p. 107--121.
+
+\bibitem{Delivery_Masson_2014} R.~Masson, F.~Lehued, O.~ Peton,The dial-a-ride problem with transfers. // Computers and Operations Research, Vol. 41, 2014, p. 12--23.
 % http://www.sciencedirect.com/science/article/pii/S0191261599000168
+
+\bibitem{jlogistics}  R. Shafeyev. Java-based framework for sloving routing problems.\\ url: http://jlogistics.net, 2015.
+
+\bibitem{Delivery_Coltin_2014} B.~Coltin, M.~Veloso, Scheduling for Transfers in Pickup and Delivery Problems with Very Large Neighborhood Search // The Twenty-Eighth Conference on Artificial Intelligence, Quebec City, Canada, 2014, 7 p.
+% http://www.cs.cmu.edu/~mmv/papers/14aaai-ColtinVeloso.pdf
 
 \bibitem{Tabu_search} O.~Braysy, M.~Gendreau, Vehicle Routing Problem with Time Windows, Part I: Route Constuction and local algorithms // Transportation science Vol.39 No. 1, 2005, p. 104-118.
 
@@ -443,7 +450,14 @@ Los Angeles,  2012, 81--115.
 
 \bibitem{problems_Golden}  B. Golden, E. Wasil, J. Kelly, I-M. Chao. The impact of metaheuristics on solving the vehicle routing problem: Algorithms, problem sets, and computational results. In T. Crainic and G. Laporte, editors // Fleet Management and Logistics, Kluwer, Boston, 1998 p. 33–56.
 
-\bibitem{problems_Taillard}  E. Taillard. VRP benchmarks.\\ http://mistic.heig-vd.ch/taillard/problemes.dir/vrp.dir/vrp.html, 1993.
+\bibitem{problems_Taillard}  E. Taillard. VRP benchmarks.\\ url: http://mistic.heig-vd.ch/taillard/problemes.dir/vrp.dir/vrp.html, 1993.
+
+\bibitem{opt_Goncharov} E.~Goncharov, Y~Kochetov, Probabilistic search with exclusions for discrete unconstrained optimization  //Discrete Analysis and Operations Research, Moscow, Serial 2. Vol. 9, 2002, p. 13-30.
+%Гончаров Е.Н., Кочетов Ю.А. Вероятностный поиск с запретами для дискретных задач безусловной оптимизации // Дискрет. анализ и исслед. операций. Сер. 2. Т.9, № 2. 2002, с. 13-30.
+
+\bibitem{opt_Kochetov}   Y~Kochetov, Probabilistic methods of local search for discrete optimization problems //Discrete Mathematics and Its Applications: Proceedings of youth lectures and scientific schools in discrete mathematics and its applications, Publishing House of the Center for Applied Research at the Mechanics and Mathematics. Faculty of Moscow State University, 2001, p. 84-117.  
+%Кочетов Ю.А. Вероятностные методы локального поиска для задач дискретной оптимизации // Дискретная математика и ее приложения: Сб. лекций молодежных и научных школ по дискретной математике и ее приложениям. М.: Изд-во центра прикл. исслед. при мех-мат. фак. МГУ, 2001, с. 84-117; 
+
 \end{thebibliography}
 
 
