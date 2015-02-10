@@ -1,6 +1,7 @@
 % !TeX spellcheck = en_US
 \documentclass[]{TAACpaper}
 \usepackage[linesnumbered,boxed]{algorithm2e}
+\pagestyle{plain}
 \begin{document}
 
 %This is the comment. Further under the text features of use of style of theses are described
@@ -145,13 +146,13 @@ Present the set of matrices $\{X^k\}$ in the form of a vector defined on the hyp
 & F(\vec{u})\to min,\vec{u}\in E^{\eta}
 \end{align}	
 
-Denote by $\delta(\vec{u},\vec{v})$ the Hamming distance between $\vec{u}$ and $\vec{v}$. Through $N_l(\vec{u})$ we denote the neighborhood of a point $\vec{u}$ radius $l$, ie:
+Denote by $\delta(\vec{u},\vec{v})$ the Hamming distance between $\vec{u}$ and $\vec{v}$. Through $N_l(\vec{u})$ we denote the neighborhood of a point $\vec{u}$ radius $l$, ie \cite{vrp_shafeyev}:
 \begin{align} 
 & N_l(\vec{u})=\{\vec{v} \in E^{\eta}:\delta(\vec{u},\vec{v})\le l \}, l=\bar{1,\eta}
 \end{align}	
 
 When $l=\eta$ a set $ N_l(\vec{u})$ for any vector $\vec{u}$ coincides with the set $E^{\eta}$ and being in this neighborhood vector with a minimum value of the objective function is equivalent to solving the original problem. The standard algorithm local search algorithm starts with a randomly selected vector $\vec{u^0}$.
-On the $i$ step of the algorithm move from the current vector in the neighbouring that the minimum value of the objective function in the neighborhood of the given vector:
+On the $i$ step of the algorithm move from the current vector in the neighboring that the minimum value of the objective function in the neighborhood of the given vector:
 \begin{align} 
 & F(\vec{u}^{i+1})=min\{F(\vec{v}):\vec{v} \in N_l(\vec{u}^i)\}
 \end{align}	
@@ -182,7 +183,7 @@ called the list of prohibitions. When building the list of all pairs of differen
 			\textbf{goto} 5
 		}
 		{
-			// find optimum into the neighbord $N_l$: \\
+			// find optimum into the neighborhood $N_l$: \\
 			$ u^{i+1} : F(u^{i+1}) = min\{ F(y): y \in N_l \}$
 		} 
 
@@ -198,7 +199,7 @@ called the list of prohibitions. When building the list of all pairs of differen
 	}
 	\textbf{return} $u^{opt}$
 	
-\caption{Pseudo-code for probabilistic tabu-search algorithm.}
+\caption{Pseudo-code for probabilistic Tabu Search algorithm.}
 \label{alg:TabuSearch}
 \end{algorithm}
 
@@ -238,7 +239,7 @@ The most difficult part of the local search algorithm with the prohibitions are 
 
 
 \subsection{Analysis of the algorithm parameters}
-Modified tabu search algorithm has 3 main parameters: $p$ -- the probability of hitting solutions in a neighborhood, $h$ -- size of the list of prohibitions and $N_{neighbors}$ -- accepted count limit of size of neighbordhood $N_l(\vec{u})$. For the experiments, we constructed the test tasks on the basis of the capacity routing problems developed by Breedam, Fisher, Christofides and Eilon. To determine trends in time and cost of the decision to use exponential smoothing by a factor of $0.1$.
+The Tabu Search algorithm has two main parameters: $h$ -- size of the list of prohibitions and $N_{neighbors}$ -- accepted count limit of size of neighbordhood $N_l(\vec{u})$. For the experiments, we constructed the test tasks on the basis of the capacity routing problems developed by Breedam, Fisher, Christofides and Eilon. To determine trends in time and cost of the decision we used exponential smoothing by a factor of $0.1$.
 
 \begin{figure}[h]
 	\hfil\includegraphics[height=3.0in]{images/tabuSize_stepCount}\hfil
@@ -252,10 +253,10 @@ Modified tabu search algorithm has 3 main parameters: $p$ -- the probability of 
 In this experiment we use two different breakpoint strategies: 
 \begin{enumerate}
 	\item $StepCount$ termination strategy --  terminates when an amount of steps has been reached;
-	\item $TimeSpent$ termination strategy -- terminates when an amount of time has been used.
+	\item $TimeSpent$ termination strategy -- terminates when an amount of time has been reached.
 \end{enumerate}
 
-As should have been expected, for large values of the parameter a jam occurs in local optimum due to the large number of restrictions of movement in space. Otherwise if you select a too small tabu size, algorithm can still get stuck in a local optimum. In the first computational experiment we made finding the best solutions for different values of the tabu size parameter from interval $h \in [0, 40]$ (pict. 1 an pict. 2).
+As should have been expected, for large values of the parameter a jam occurs in local optimum due to the large number of restrictions of movement in space. Otherwise if you select a too small tabu size, algorithm can still get stuck in a local optimum. In the first computational experiment we made finding the best solutions for different values of the tabu size parameter from interval $h \in [0, 40]$ (pict. \ref{aba:fig2} an pict. \ref{aba:fig3}).
 \begin{figure}[h]
 	\hfil\includegraphics[height=2.2in]{images/tabuSize_time}\hfil
 	\caption
@@ -274,13 +275,13 @@ As should have been expected, for large values of the parameter a jam occurs in 
 	\label{aba:fig4}
 \end{figure}
 
-In the second experiment (see figure \ref{aba:fig4}) we built a relationship between the number $N_{neighborhood}$ of viewed solutions neighborhood size $N_l(\vec{u})$ using $TimeSpent$ termination strategy. In this experiment we made finding the best solutions for different values of the neighborhood size parameter from interval $N_{neighborhood} \in [750, 850]$ (pict. 1 an pict. 2).
+In the second experiment (see figure \ref{aba:fig4}) we built a relationship between the number $N_{neigh.}$ of viewed solutions neighborhood size $N_l(\vec{u})$ using $TimeSpent$ termination strategy. In this experiment we made finding the best solutions for different values of the neighborhood size parameter from interval $N_{neigh.}\in[750, 850]$.
 
 \subsection{Modification}
 
 The first generalized diagram is as follows. First, the set of solutions is constructed by Solomon. Then every solution is improved by tabu search and choose the best solution according to the objective function.
 
-Modification of the scheme is based on the hypothesis of "On a large valley." According to this hypothesis, the average local optima are located much closer to the global than a randomly chosen point. There is a certain concentration of local optimum in a small part of the feasible region, which is figuratively called a large valley. If this assumption is true, then it is advisable to remember the best solutions and based on them design new original decision. We use this idea to solve the  Routing Courier Delivery Problem.
+Modification of the scheme is based on the hypothesis of "On a large valley"\cite{opt_Kochetov}. According to this hypothesis, the average local optima are located much closer to the global than a randomly chosen point. There is a certain concentration of local optimum in a small part of the feasible region, which is figuratively called a large valley. If this assumption is true, then it is advisable to remember the best solutions and based on them design new original decision. We use this idea to solve the  Routing Courier Delivery Problem.
 
 We proceed to the description of the algorithm in scheme \ref{alg:constructSolution}. Let $U^{opt}$ is a sorted array of optimal solutions by value of the objective function ascending,  ie:
 \begin{equation} \label{u_sorted}
@@ -294,7 +295,7 @@ p^1_u = 1 > p^2_u > \ldots > p^i_u> \ldots   > p^{sizeof(U^{opt})}_u,  p^{sizeof
 \begin{algorithm}[H]
 
 	\textbf{function constructSolution}( $U^{opt}, p_u, n^{min}_s$) \\
-	// $U^{opt}$ -- a sorted set array optimal solutions \\
+	// $U^{opt}$ -- a sorted set array of optimal solutions \\
 	
 	
 	\If{$ sizeof(U^{opt}) <  n^{min}_s$}{
@@ -340,7 +341,7 @@ The configuration parameters  $\psi^j_i $ are randomly selected from the interva
  \begin{equation} \label{anchor_points}
      \rho^j_i =  \dfrac{F(u^{opt}_1)}{avg[F(u^{opt}_k)]}, \forall k: \psi^j_k = \psi^j_i
  \end{equation}
- The number of anchor points $n_{\rho}$  is smaller than the set of optimal solutions, because a set of reference anchor points are removed the same point $(n_{\rho} \leq  n_u)$.
+ The number of anchor points $n_{\rho}$  is smaller than the set of optimal solutions, because a set of  anchor points are removed the same points $(n_{\rho} \leq  n_u)$.
  
 The main idea is that the distribution density should be larger at those points (parameters $\psi^j_i$) in which high quality solutions than the points at which the low quality of solutions.
 Therefore, we presented the distribution function $f_j(z)$ as a sum of kernel functions:
@@ -409,7 +410,7 @@ Therefore, we presented the distribution function $f_j(z)$ as a sum of kernel fu
  In figure \ref{aba:fig5} the results of an experiment in which  were presented a dependence of the quality of the solutions obtained by the classical and modified algorithms and  the breaking point time. As seen from the graph, with an increase in operating time of the computational scheme, the quality of solutions obtained using the modified algorithm is growing faster than using classical Tabu Search algorithm.
  
  \begin{figure}[h]
- 	\hfil\includegraphics[height=3.0in]{images/tabuSize_time.png}\hfil
+ 	\hfil\includegraphics[height=3.0in]{images/tabu_mod.png}\hfil
  	\caption
  	{
  		The dependence of the quality of solutions and  the breaking point time by classic and modified algorithms using $ TimeSpent $ termination strategy
@@ -424,23 +425,34 @@ During the research has been investigated and implemented tabu search algorithm 
 The analysis of the parameters of implemented algorithms allowed us to determine their optimal values for this class of routing problems. With the modified algorithm was found solutions of model problems, which in most cases have an acceptable deviation from the global optimum.
 
 
+
+
 \begin{thebibliography}{99}
 %In brackets we writes the name which is used for referencing.
 
 \bibitem{RCDS} F.~Ordonez, Chen Wang, A New Approach for Routing Courier Delivery Services //METRANS Transportation Center:University of Southern California
 Los Angeles,  2012, 81--115.
 
-\bibitem{Delivery_Babb_2005} T.~Babb, Pickup and Delivery Problem with Time Windows // Coordinated Transportation Systems: The State of the Art. Department of Computer Science University of Central Florida Orlando, Florida, 2005, 38 p.
-
-\bibitem{Delivery_Barnes_2000} W~Barnes, Solving the pickup and delivery problem with time windows using reactive tabu search // Transportation Research Part B: Methodological, Vol. 34 Issue 2, 2000, p. 107--121.
-
 \bibitem{Delivery_Masson_2014} R.~Masson, F.~Lehued, O.~ Peton,The dial-a-ride problem with transfers. // Computers and Operations Research, Vol. 41, 2014, p. 12--23.
 % http://www.sciencedirect.com/science/article/pii/S0191261599000168
 
-\bibitem{jlogistics}  R. Shafeyev. Java-based framework for sloving routing problems.\\ url: http://jlogistics.net, 2015.
+\bibitem{Delivery_Babb_2005} T.~Babb, Pickup and Delivery Problem with Time Windows // Coordinated Transportation Systems: The State of the Art. Department of Computer Science University of Central Florida Orlando, Florida, 2005, 38 p.
+
+\bibitem{vrp_shafeyev} R.~Shafeyev ,L.~Lyubchik, A some realization of Tabu Search algorithm for Solving the Transportation Problem with Time Constraints // Vestnik NTU "KhPI". – Kharkov: NTU
+"KhPI", 2013. – No3 (977). – p. 35–39.
+
+\bibitem{jlogistics}  R. Shafeyev. Java-based optimixation framework for solving routing problems.\\ url: http://jlogistics.net, 2015.
+
+\bibitem{Delivery_Barnes_2000} W~Barnes, Solving the pickup and delivery problem with time windows using reactive tabu search // Transportation Research Part B: Methodological, Vol. 34 Issue 2, 2000, p. 107--121.
 
 \bibitem{Delivery_Coltin_2014} B.~Coltin, M.~Veloso, Scheduling for Transfers in Pickup and Delivery Problems with Very Large Neighborhood Search // The Twenty-Eighth Conference on Artificial Intelligence, Quebec City, Canada, 2014, 7 p.
 % http://www.cs.cmu.edu/~mmv/papers/14aaai-ColtinVeloso.pdf
+
+\bibitem{opt_Goncharov} E.~Goncharov, Y~Kochetov, Probabilistic search with exclusions for discrete unconstrained optimization  //Discrete Analysis and Operations Research, Moscow, Serial 2. Vol. 9, 2002, p. 13-30.
+%Гончаров Е.Н., Кочетов Ю.А. Вероятностный поиск с запретами для дискретных задач безусловной оптимизации // Дискрет. анализ и исслед. операций. Сер. 2. Т.9, № 2. 2002, с. 13-30.
+
+\bibitem{opt_Kochetov}   Y~Kochetov, Probabilistic methods of local search for discrete optimization problems //Discrete Mathematics and Its Applications: Proceedings of youth lectures and scientific schools in discrete mathematics and its applications, Publishing House of the Center for Applied Research at the Mechanics and Mathematics. Faculty of Moscow State University, 2001, p. 84-117.  
+%Кочетов Ю.А. Вероятностные методы локального поиска для задач дискретной оптимизации // Дискретная математика и ее приложения: Сб. лекций молодежных и научных школ по дискретной математике и ее приложениям. М.: Изд-во центра прикл. исслед. при мех-мат. фак. МГУ, 2001, с. 84-117; 
 
 \bibitem{Tabu_search} O.~Braysy, M.~Gendreau, Vehicle Routing Problem with Time Windows, Part I: Route Constuction and local algorithms // Transportation science Vol.39 No. 1, 2005, p. 104-118.
 
@@ -452,11 +464,8 @@ Los Angeles,  2012, 81--115.
 
 \bibitem{problems_Taillard}  E. Taillard. VRP benchmarks.\\ url: http://mistic.heig-vd.ch/taillard/problemes.dir/vrp.dir/vrp.html, 1993.
 
-\bibitem{opt_Goncharov} E.~Goncharov, Y~Kochetov, Probabilistic search with exclusions for discrete unconstrained optimization  //Discrete Analysis and Operations Research, Moscow, Serial 2. Vol. 9, 2002, p. 13-30.
-%Гончаров Е.Н., Кочетов Ю.А. Вероятностный поиск с запретами для дискретных задач безусловной оптимизации // Дискрет. анализ и исслед. операций. Сер. 2. Т.9, № 2. 2002, с. 13-30.
 
-\bibitem{opt_Kochetov}   Y~Kochetov, Probabilistic methods of local search for discrete optimization problems //Discrete Mathematics and Its Applications: Proceedings of youth lectures and scientific schools in discrete mathematics and its applications, Publishing House of the Center for Applied Research at the Mechanics and Mathematics. Faculty of Moscow State University, 2001, p. 84-117.  
-%Кочетов Ю.А. Вероятностные методы локального поиска для задач дискретной оптимизации // Дискретная математика и ее приложения: Сб. лекций молодежных и научных школ по дискретной математике и ее приложениям. М.: Изд-во центра прикл. исслед. при мех-мат. фак. МГУ, 2001, с. 84-117; 
+
 
 \end{thebibliography}
 
