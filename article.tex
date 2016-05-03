@@ -52,9 +52,9 @@ $w_q$ -- client shipment that is required to deliver from the sender to the reci
 $[t_{s}^{q}, t_{s}^{q}+ \Delta{t_{s}^{q}}]$ -- the time window within which worker must to pick up the goods from the sender;\\ 
 $[t_{r}^{q}, t_{r}^{q}+ \Delta{t_{r}^{q}}]$ -- the time window within which worker must deliver the goods to the receiver.
  
-Thus, each application can be represented as a tuple:
+Thus, each request can be represented as a tuple:
 \begin{equation}
-\forall q \in Q: \exists q = (s_q,r_q, \vec{P}_{s_q}, \vec{P}_{r_q}, w_q, t_{s}^{q}, \Delta{t_{s}^{q}}, t_{r}^{q}, \Delta{t_{r}^{q}})
+\forall q \in Q: q = (s_q,r_q, \vec{P}_{s_q}, \vec{P}_{r_q}, w_q, t_{s}^{q}, \Delta{t_{s}^{q}}, t_{r}^{q}, \Delta{t_{r}^{q}})
 \end{equation}
 To estimate the cost of transportation between destinations defined cost function $\Omega$:
 \begin{equation}
@@ -157,7 +157,7 @@ On the $i$ step of the algorithm move from the current vector in the neighboring
 & F(\vec{u}^{i+1})=min\{F(\vec{v}):\vec{v} \in N_l(\vec{u}^i)\}
 \end{align}	
 
-The algorithm terminates at a local optimum, when $F(\vec{x^{i+1}})=F(\vec{x^i})$. When solving the transportation problem is a typical situation when many local optimums and only one of them is global:
+The algorithm terminates at a local optimum, when $F(\vec{u^{i+1}})=F(\vec{u^i})$. When solving the transportation problem is a typical situation when many local optimums and only one of them is global:
 \begin{align} 
 & F_{opt}=min\{F(\vec{v}):v \in E^{\eta}\}
 \end{align}	
@@ -232,7 +232,7 @@ Added the client, which is $c(v_i,u,v_i+1)$ least:
 & u^*:c(v_i,u^*,v_i+1)=min[c(v_i,u,V_i+1)]
 \end{align}	
 
-As a result the client $u^*$ is added to the current route $k$ the position between nodes $v_i$ and $v_i+1$.
+As a result the client $u^*$ is added to the current route $k$ the position between nodes $v_i$ and $v_(i+1)$.
 
 \subsection{A Method of Forming Solutions Neighborhood}
 The most difficult part of the local search algorithm with the prohibitions are viewing the surroundings $N_l(\vec{u^i},\vec{\phi^i})$ of the current point $\vec{us^i}$. For even larger values of $l$ and the parameter $p=1$ in the outskirts plenty of points. But due to the nature of the model's constraints many of them are not the solution. Therefore, due to the nature of the considered discrete tasks, we used the following method of determining the area. On the $i$ step of the algorithm compiled from routes pair: $\{R_1,R_2\},\{R_1,R_3\},\dots,\{R_1,R_n\},\{R_2,R_1\}, \{R_2,R_3\},\dots,\{R_2,R_n\},\dots,\{R_{n-1},R_{n}\}$. Then over each pair of routes is performed in moving requests. The resulting displacement vectors $\vec{u}$ are neighborhood $N_l(\vec{u^i},\vec{\phi^i})$. For moving  we used change-move  and swap-move operations.
@@ -259,8 +259,7 @@ In this experiment we use two different breakpoint strategies:
 As should have been expected, for large values of the parameter a jam occurs in local optimum due to the large number of restrictions of movement in space. Otherwise if you select a too small tabu size, algorithm can still get stuck in a local optimum. In the first computational experiment we made finding the best solutions for different values of the tabu size parameter from interval $h \in [0, 40]$ (pict. \ref{aba:fig2} an pict. \ref{aba:fig3}).
 \begin{figure}[h]
 	\hfil\includegraphics[height=2.2in]{images/tabuSize_time}\hfil
-	\caption
-	{
+	\caption{
 	  The dependence of the quality of solutions on the size of the tabu list when using $ TimeSpent $ termination strategy
 	}
 	\label{aba:fig3}
@@ -268,10 +267,10 @@ As should have been expected, for large values of the parameter a jam occurs in 
 
 \begin{figure}[h]
 	\hfil\includegraphics[height=2.2in]{images/acceptedCountLimit}\hfil
-	\caption
-	{
+	\caption{
 	  The dependence of the quality of solutions on the neighborhood size when using $ TimeSpent $ termination strategy
 	}
+	
 	\label{aba:fig4}
 \end{figure}
 
@@ -456,7 +455,7 @@ Los Angeles,  2012, 81--115.
 
 \bibitem{Tabu_search} O.~Braysy, M.~Gendreau, Vehicle Routing Problem with Time Windows, Part I: Route Constuction and local algorithms // Transportation science Vol.39 No. 1, 2005, p. 104-118.
 
-\bibitem{Goldberg_Kennedy} V.~Goldberg, R.~Kennedy, An Efficient cost scaling algotirhm for the assignment problem, Math. Program., 1995, p. 153--177.  
+\bibitem{Goldberg_Kennedy} V.~Goldberg, R.~Kennedy, An Efficient cost scaling algorithm for the assignment problem, Math. Program., 1995, p. 153--177.  
 
 \bibitem{problems_Christofides}  N. Christofides, S. Eilon, An algorithm for the vehicle dispatching problem //Operational Research Quarterly, 20, 1969, p. 309–318.
 
