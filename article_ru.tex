@@ -346,19 +346,18 @@ The Tabu Search алгоритм имеет два основных настро
 	\label{aba:fig4}
 \end{figure}
 
-In the second experiment (see figure \ref{aba:fig4}) we built a relationship between the number $N_{neigh.}$ of viewed solutions neighborhood size $N_l(\vec{u})$ using $TimeSpent$ termination strategy. In this experiment we made finding the best solutions for different values of the neighborhood size parameter from interval $N_{neigh.}\in[750, 850]$.
+Во втором эксперименте (смотри рисунок  \ref{aba:fig4}) мы построили зависимость между параметром $N_{neigh.}$ просматриваемой размера решения окрестности $N_l(\vec{u})$ используя $TimeSpent$ стратегии завершения. В этом эксперименте мы сделали находить оптимальные решения для различных значений параметра размера окрестности от интервала $N_{neigh.}\in[750, 850]$.
 
 \subsection{Modification}
+Первая обобщенная схема выглядит следующим образом. Во-первых, множество решений строится Соломона. Тогда каждое решение улучшается поиск с запретами и выбрать оптимальное решение в соответствии с целевой функцией.
 
-The first generalized diagram is as follows. First, the set of solutions is constructed by Solomon. Then every solution is improved by tabu search and choose the best solution according to the objective function.
+Модификация схемы основана на гипотезе «О большой долине" \cite{opt_Kochetov}.  Согласно этой гипотезе, в среднем локальных оптимумов расположены гораздо ближе к глобальным, чем случайно выбранной точке. Существует определенная концентрация локального оптимума в небольшой части допустимой области, которая образно называется большая долина. Если это предположение верно, то желательно, чтобы вспомнить лучшие решения и на их основе разработать новое оригинальное решение. Мы используем эту идею для решения маршрутизации Courier проблемы доставки.
 
-Modification of the scheme is based on the hypothesis of "On a large valley"\cite{opt_Kochetov}. According to this hypothesis, the average local optima are located much closer to the global than a randomly chosen point. There is a certain concentration of local optimum in a small part of the feasible region, which is figuratively called a large valley. If this assumption is true, then it is advisable to remember the best solutions and based on them design new original decision. We use this idea to solve the  Routing Courier Delivery Problem.
-
-We proceed to the description of the algorithm in scheme \ref{alg:constructSolution}. Let $U^{opt}$ is a sorted array of optimal solutions by value of the objective function ascending,  ie:
+Перейдем к описанию алгоритма в схеме \ref{alg:constructSolution}. Пусть $U^{opt}$ является отсортированный массив оптимальных решений по значению целевой функции по возрастанию, то есть:
 \begin{equation} \label{u_sorted}
 F(u^{opt}_1) \leq F(u^{opt}_2) \leq \ldots < F(u^{opt}_i) \leq \ldots \leq F(u^{opt}_{sizeof(U^{opt})})
 \end{equation}
-Each solution $u^{opt}_i$ gets into the population with a given probability $p^i_u$, the probability of selection decreases with increasing sequence number:
+Каждое решение $u^{opt}_i$ попадает в популяции с заданной вероятностью $p^i_u$, вероятность выбора уменьшается с увеличением порядкового номера:
 \begin{equation} \label{p_sorted}
 p^1_u = 1 > p^2_u > \ldots > p^i_u> \ldots   > p^{sizeof(U^{opt})}_u,  p^{sizeof(U^{opt})}_u > 0
 \end{equation}
@@ -396,32 +395,33 @@ p^1_u = 1 > p^2_u > \ldots > p^i_u> \ldots   > p^{sizeof(U^{opt})}_u,  p^{sizeof
 	\label{alg:constructSolution}
 \end{algorithm}
 
-It then crosses solutions by the following rule: with the first solution is randomly selected route $R_1$. Then another solution is selected from a route $R_2$ that does not include client requests from the first  route etc. If the client requests were not included in the solution $u^0$, then these requests are added by the construction heuristics algorithm (for example, Solomon algorithm).
+Затем она пересекает решения по следующему правилу: с первым решением случайным образом выбирается маршрут $R_1$. Тогда другое решение выбирается из маршрута $R_2$ который не включает в себя клиентские запросы от первого маршрута и т.д. Если клиентские запросы не были включены в решение  $u^0$, t то эти запросы добавляются в алгоритм построения эвристики ( например, Соломон алгоритм).
 
 
-Now we describe the primary function $SolveCDP()$ of the modified algorithm presented in pseudocode form in Scheme \ref{alg:modTabuSearch}. In this function using a loop is a sequential formation of an array of the best solutions $U^{opt}$ by means TabuSearch algorithm.   
+Теперь мы опишем основную функцию $SolveCDP()$  модифицированного алгоритма представлено в виде псевдокода на схеме \ref{alg:modTabuSearch}. В этой функции с помощью цикла является последовательное формирование массива из лучших решений $U^{opt}$ с помощью алгоритма TabuSearch.  
 
-Based on the results of the experiments described in the preceding section, we decided to set the parameters of the algorithm are not fixed values, but as a random variable of predetermined period. For example, the size of the tabu list $h$ is defined as the interval $[10,35]$(see pict. \ref{aba:fig2} and  pict. \ref{aba:fig3}) and the neighbordhood size $l=N_{neighbordhood}$ is defined as the interval $[600\cdot n,850\cdot n]$, where $n$ -- problem size (see pict. \ref{aba:fig4} ).
+На основании результатов экспериментов, описанных в предыдущем параграфе, мы решили установить параметры алгоритма не являются фиксированными значениями, но, как случайной величины заданного периода. Например, размер списка $h$  определяется как интервал  $[10,35]$(see pict. \ref{aba:fig2} and  pict. \ref{aba:fig3}) и размер окрестности $l=N_{neighbordhood}$ определяется как интервал $[600\cdot n,850\cdot n]$, где $n$ -- размерность задачи (см. рисунок \ref{aba:fig4} ).
 
-Let $\vec{\psi_i} = (\psi^1_i,\psi^2_i,\psi^3_i) = (\tilde{l_i},\tilde{p_i},\tilde{l_h})$ -- a set of values of the TabuSearch configuration parameters which was using for solving the problem in the step $i$.
+Пусть $\vec{\psi_i} = (\psi^1_i,\psi^2_i,\psi^3_i) = (\tilde{l_i},\tilde{p_i},\tilde{l_h})$ -- набор значений параметров конфигурации TabuSearch, который использовался для решения задачи на этапе $i$.
 
-Let $[\psi^j_{begin}, \psi^j_{end}]$ -- an optimal interval of the TabuSearch $j$ -parameter. (For example: if $j=3$, then: $[\psi^3_{begin}, \psi^3_{end}]= [h_{begin}, h_{end}] = [10, 40] $). These intervals are initial data and they are set in the initialization block. 
+Пусть $[\psi^j_{begin}, \psi^j_{end}]$ -- оптимальный интервал TabuSearch $j$ -parameter. (For example: if $j=3$, then: $[\psi^3_{begin}, \psi^3_{end}]= [h_{begin}, h_{end}] = [10, 40] $).
+Эти интервалы являются исходные данные, и они установлены в блоке инициализации.
 
-The configuration parameters  $\psi^j_i $ are randomly selected from the interval $[\psi^j_{begin}, \psi^j_{end}]$ according to a distribution law. We proposed to build the distribution density $f_j(\psi^j_i)$ of the random variable $\psi^j_i$ as follows. At first, we define anchor points:
+Настроечные параметры  $\psi^j_i $ выбираются случайным образом из интервала $[\psi^j_{begin}, \psi^j_{end}]$ в соответствии с законом распределения. Мы предложили построить плотность распределения $f_j(\psi^j_i)$ случайной величины $\psi^j_i$следующим образом. Во-первых, мы определяем опорные точки:
  
  \begin{equation} \label{anchor_points}
      \rho^j_i =  \dfrac{F(u^{opt}_1)}{avg[F(u^{opt}_k)]}, \forall k: \psi^j_k = \psi^j_i
  \end{equation}
- The number of anchor points $n_{\rho}$  is smaller than the set of optimal solutions, because a set of  anchor points are removed the same points $(n_{\rho} \leq  n_u)$.
+Число опорных точек $n_{\rho}$  меньше, чем множество оптимальных решений, так как набор опорных точек, удаляются те же точки $(n_{\rho} \leq  n_u)$.
  
-The main idea is that the distribution density should be larger at those points (parameters $\psi^j_i$) in which high quality solutions than the points at which the low quality of solutions.
-Therefore, we presented the distribution function $f_j(z)$ as a sum of kernel functions:
+Основная идея заключается в том, что плотность распределения должна быть больше в тех точках (параметры  $\psi^j_i$) в которых высококачественные решения, чем точек, в которых низкое качество решений.
+Таким образом, мы представили функцию распределения $f_j(z)$ в виде суммы ядерных функций:
  \begin{equation} \label{dist_density}
  f_j(z) = \alpha_j * \sum\limits_{i=1}^{n_{\rho}}  \rho^j_i * K(z -  \psi^j_i)
  \end{equation}
- where: $K(x)$ -- kernel function, $ \alpha$ -- a normalizing parameter
+ где: $K(x)$ -- ядерная функция, $ \alpha$ -- нормирующий параметр
  
- We have chosen as the kernel the function of parabolic type(known as an Epanechnikov function),  because during the experiments the best results were obtained using this function:
+Мы выбрали в качестве ядра функции параболического типа (известный как функция Епанечникова), так как в ходе экспериментов лучшие результаты были получены с помощью этой функции:
  \begin{equation} \label{dist_density}
   K(z) = 3/4 \cdot (1-z^2)
  \end{equation}
@@ -465,12 +465,12 @@ Therefore, we presented the distribution function $f_j(z)$ as a sum of kernel fu
 	\label{alg:modTabuSearch}
 \end{algorithm}
 
- The parameter $\alpha_j$ was introduced in the density function to perform the normalization condition:
- \begin{equation} \label{norm_cond}
+Параметр $\alpha_j $ была введена в функции плотности для выполнения условия нормировки:
+\begin{equation} \label{norm_cond}
  \int\limits_{\psi^j_{begin}}^{\psi^j_{end}} f_j(z)dz = 1  =>  (\alpha_j)^{-1} = \sum\limits_{i=1}^{n_{\rho}} \rho^j_i \cdot  \int\limits_{\psi^j_{begin}}^{\psi^j_{end}} K(z -  \psi^j_i) dz 
  \end{equation}
 
- The parameter $\alpha_j$ can be written in explicit form:
+ Параметр $\alpha_j$можно записать в явном виде:
   \begin{equation} \label{norm_cond}
  \begin{split}
  (\alpha_j)^{-1} & = \dfrac{3}{4} \cdot \sum\limits_{i=1}^{n_{\rho}} \rho^j_i \cdot [(1 - (\psi^j_i)^2) \cdot (\psi^j_{end} - \psi^j_{begin}) + \\
@@ -478,22 +478,20 @@ Therefore, we presented the distribution function $f_j(z)$ as a sum of kernel fu
  \end{split}
  \end{equation}
  
- In figure \ref{aba:fig5} the results of an experiment in which  were presented a dependence of the quality of the solutions obtained by the classical and modified algorithms and  the breaking point time. As seen from the graph, with an increase in operating time of the computational scheme, the quality of solutions obtained using the modified algorithm is growing faster than using classical Tabu Search algorithm.
+На рисунке \ref{aba:fig5} результаты эксперимента, в котором были представлены зависимость качества получаемых решений с помощью классических и модифицированных алгоритмов и времени переломной точкой. Как видно из графика, с увеличением времени работы расчетной схемы, качество получаемых решений с использованием модифицированного алгоритма растет быстрее, чем при использовании классического алгоритма Табу поиска.
  
  \begin{figure}[h]
  	\hfil\includegraphics[height=3.0in]{images/tabu_mod.png}\hfil
  	\caption
- 	{
- 		The dependence of the quality of solutions and  the breaking point time by classic and modified algorithms using $ TimeSpent $ termination strategy
- 	}
+ 	{Зависимость качества растворов и времени Breaking Point с помощью классических и модифицированных алгоритмов с помощью $ TimeSpent $ стратегии завершения}
  	\label{aba:fig5}
  \end{figure}
  
  
 \subsection{Conclusion}
-During the research has been investigated and implemented tabu search algorithm to solve the Static Routing Courier Delivery problem with time constraints. Also a modified algorithm was developed  based on the Tabu Search algorithm to improve the quality of the solutions. Modified algorithm gave the best solutions in terms of the balance between the number of vehicles and the cost traveled.  In practice this algorithm can be used for decision support in intelligent systems for improving the quality of customer service and for reducing waiting the time to use vehicle, this will reduce fuel costs and depreciation of transport.
+В ходе исследования был исследован и реализован алгоритм поиска с запретами решить проблему доставки статической маршрутизации Courier с нехваткой времени. Кроме того, модифицированный алгоритм был разработан на основе алгоритма Табу поиска, чтобы улучшить качество решений. Модифицированный алгоритм дал лучшие решения с точки зрения баланса между количеством транспортных средств и стоимости пройденного. На практике этот алгоритм может быть использован для поддержки принятия решений в интеллектуальных системах для повышения качества обслуживания клиентов и сокращения ждут время, чтобы использовать транспортное средство, это позволит сократить расходы на топливо и амортизацию транспорта.
 
-The analysis of the parameters of implemented algorithms allowed us to determine their optimal values for this class of routing problems. With the modified algorithm was found solutions of model problems, which in most cases have an acceptable deviation from the global optimum.
+Анализ параметров реализованных алгоритмов позволили определить их оптимальные значения для этого класса задач маршрутизации. С помощью модифицированного алгоритма были найдены решения модельных задач, которые в большинстве случаев имеют приемлемое отклонение от глобального оптимума.
 
 
 
