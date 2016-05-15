@@ -11,7 +11,7 @@
 \def\dd#1#2{\frac{\partial#1}{\partial#2}}
 \section{
 %%%%%%%%%%%%%%% You have to specify name of your paper here
-``Investigation of tuning parameters of tabu search algorithm and its modification  for solving the static Routing Courier Delivery Problem.'' 
+``Investigation of tuning parameters of Tabu Search algorithm and its modification  for solving the Routing Courier Delivery Problem.'' 
 }
 
 \authors{
@@ -21,47 +21,51 @@ R.~Shafeyev , L.~Lyubchik
 \abstract{
 %%%%%%%%%%%%%%% You have to insert abstract of your paper here
 
-The paper considers the routing courier delivery problem with the service time for which the discrete model was constructed and the calculation scheme based on tabu search algorithm. The efficiency  of the proposed algorithm‘s scheme has been tested on a large-scale problems, which were generated on the basis of different classes known model routing problems.
+The paper considers the Routing Courier Delivery Problem with the service time for which the discrete model was constructed and the calculation scheme based on the Tabu search algorithm. This article provides a method for dynamically adjusting the parameters of Tabu Search algorithm in the process of solving the problem. The efficiency  of the proposed algorithm‘s scheme has been tested on large-scale problems, which were generated on the basis of well known model routing problems.
 
 }
 
 %%%%%%%%%%%%%%% To define new section use a command \subsection
 % We are defining "Introduction" here
 \subsection{Introduction}
-%%%%% Paragraph text. To separate paragraphs use empty lines.
-In the research we consider a static vehicle routing problem with time windows. This variant of the routing problem is a common problem in the courier delivery industry. Effective solution to this problem affects the quality of services provided by the company, as well as the magnitude of potential losses caused by the excess of the agreed terms of delivery. The proposed solution to the problem is based on the automation of the process of planning the route and involves the use of distributed information systems for the possible implementation of these approaches in practice. Another important criterion for good transport plan are low transport costs, which affect the cost of services.
+One means of saving resources for transportation of goods is the use of decision support systems in the field of transport logistics. One of the key functions of decision support systems in the field of transport logistics is the ability to calculate and construct efficient detour routes for various purposes in the transport network in terms of cost. The mathematical formulation of this problem is widely known as the Vehicle Routing Problem (VRP). There are several types of VRPs with various additional conditions such as the carrying vehicle`s capacity, time of deliveries and other limitations for a better description of the environment.
 
-The Routing Courier Delivery Problem with time windows requires that a set of vehicles satisfy a collection of customer requests. Each client request requires the use of a single vehicle to receive and load a specified amount of goods at one source location(sender) and to deliver them to destination location(receiver). All requests must be performed without violating either the vehicle capacity or the customer time window. The solution is a master plan that solves the problem, and takes into account the daily events that take place according to plan. In this paper, we present a discrete model and a modified tabu search algorithm  to solve the  Courier Delivery Problem with time windows. 
+This article is devoted to the courier routing problem, which is a sub-problem of VRP. The problem is to find a route to visit a given set of addresses by a number of units of vehicles carrying goods from the sender to the recipient.
 
-In order to validate our strategies decisions technique effectiveness, we have constructed a new set of benchmark problems for the pickup and delivery problem with time windows based on which were generated on the basis of different classes known model routing problems. Computational results substantiate the solution quality and efficiency of our modified tabu search algorithm.
- 
+Automation of the route planning process will be relevant for: online stores, large wholesale companies (e.g. for distribution of goods that are perishable or optimizing the delivery schemes of goods to destinations) and firms with the aim of organizing restocking in stores. A practical application of the problem can be found in the transportation of patients between the buildings of clinic \cite{Beaudry, Kergosien}, the delivery of newspapers and magazines and the delivery of fuel to homes \cite{Sarak}. The solution of these problems also has a practical application in the helicopter transportation system of people between offshore oil platforms \cite{Romero}.
+
+In recent years are an increasing amount of people turning to courier services for famous needs.Typically, client orders placed the day before and the dispatcher then has a full list of orders that must be delivered within the deedlines started by the client. Attanasio \cite{Attanasio} held a thematic research on courier services which described the advantages of using computer technologies to human dispatching. In his work he considered examples of work by eCourier Ltd, a London company that offers express services. Their clients are mainly law firms, financial institutions, advertising agencies and other organizations that are interested in the rapid delivery of goods or the sensitive documents. Once all of the orders at a particular time have been placed, you must create a route that would satisfy the requirements of the customers. Depending on the service level that was specified by the client, the courier can combine several products customers.
+
+Companies that offer courier services frequently have a mixed fleet of vehicles, which consists of bicycles, motorcycles, cars and small trucks. Depending on the type of request, the transport arrangement means and time slots will be selected the kind of vehicle that will be able to execute the order within a specified time. Researches \cite{Attanasio} showed that the using of computer methods, including optimization algorithms have been very profitable for courier companies.
+
+Thus, the use of an automated system allows to improve the quality of service, reduce delivery time, improve courier efficiency and reduce the cost of shipping, thereby providing a competitive advantage increase.
 
 \subsection{Problem Statement}
-Let $C,dim(C)=n$ is a set of vehicles and $Q,dim(Q)=m$ is a set of requests received from customers at the current time.
+Let $C,dim(C)=n$ be a set of vehicles and $Q,dim(Q)=m$ be a set of requests received from customers at the current time.
 
 Suppose that the following information is known about vehicles from set $C$: \\
 $\vec{P}_c$ -- vehicle position, $c \in C$;\\
 $L_c$ -- vehicle capacity, $c \in C$.
 
-Let $S$ is a set of senders, ($dim(S) = dim(Q) = m$), $R$ is a set of receivers, $dim(R) = dim(Q) = m$. Then each client request $q \in Q$ includes the following information:\\
+Let $S$ be a set of senders, ($dim(S) = dim(Q) = m$), $R$ is a set of receivers, $dim(R) = dim(Q) = m$. Then each client request $q \in Q$ includes the following information:\\
 $s_q$ -- a sender of client shipment, $s \in S$; \\
 $r_q$ -- a receiver of client shipment, $r \in R$; \\
 $\vec{P}_{s_q}$ -- sender position;\\
 $\vec{P}_{r_q}$ -- receiver position; \\
-$w_q$ -- client shipment that is required to deliver from the sender to the recipient; \\
-$[t_{s}^{q}, t_{s}^{q}+ \Delta{t_{s}^{q}}]$ -- the time window within which worker must to pick up the goods from the sender;\\ 
-$[t_{r}^{q}, t_{r}^{q}+ \Delta{t_{r}^{q}}]$ -- the time window within which worker must deliver the goods to the receiver.
+$w_q$ -- client shipment that is required to be delivered from the sender to the recipient; \\
+$[t_{s}^{q}, t_{s}^{q}+ \Delta{t_{s}^{q}}]$ -- the time window within which the worker must to pick up the goods from the sender;\\ 
+$[t_{r}^{q}, t_{r}^{q}+ \Delta{t_{r}^{q}}]$ -- the time window within which the worker must deliver the goods to the receiver.
  
 Thus, each request can be represented as a tuple:
 \begin{equation}
 \forall q \in Q: q = (s_q,r_q, \vec{P}_{s_q}, \vec{P}_{r_q}, w_q, t_{s}^{q}, \Delta{t_{s}^{q}}, t_{r}^{q}, \Delta{t_{r}^{q}})
 \end{equation}
-To estimate the cost of transportation between destinations defined cost function $\Omega$:
+To estimate the cost of transportation between destinations defined by the following cost function $\Omega$:
 \begin{equation}
 \forall i,j \in S \cup R: \exists \Omega_{i,j} = \Omega(\vec{P}_i,\vec{P}_j)
 \end{equation}
 
-Necessary to construct the optimal routes of vehicles movement for the transportation of goods from the sender to the receiver for all client requests.
+It is necessary to construct the most optimal routes of vehicles movement for the transportation of goods from the sender to the receiver for all client requests.
 
 \begin{figure}[h]
 	\hfil\includegraphics[height=4.0in]{images/scheme}\hfil
@@ -73,7 +77,7 @@ Necessary to construct the optimal routes of vehicles movement for the transport
 \end{figure}
 
 \subsection{Discrete model}
-Routing problem can be represented as a directed graph $G=G(V,E)$. The set $V=C\cup{S}\cup{R}$ -- nodes of the graph $G$, consisting of elements of vehicles, senders and receivers. $E$ -- dynamic set of arcs of the graph $G$, such that:
+The Routing Courier Delivery Problem can be represented as a directed graph $G=G(V,E)$. The set $V=C\cup{S}\cup{R}$ are nodes of the graph $G$, with elements consists of vehicles, senders and receivers. $E$ -- dynamic set of arcs of the graph $G$, such that:
 \begin{equation}
 \forall e(X) \in E: e(X) = (v_i,v_j), \exists v_i \in V, v_j \in V/C
 \end{equation}
@@ -82,7 +86,7 @@ Let $X = \{X^k\}^n_{k=1}$ is a sequence of variable matrices for each vehicle $k
 \begin{equation}
   x^{(k)}_{i,j} = 
     \begin{cases}
-	  1,&\text{the vehicle $k \in C$ moves from $i$ node to the $j$}\\
+	  1,&\text{the vehicle $k \in C$ moves from the $i$ node to the $j$}\\
 	  0,&\text{otherwise.}
     \end{cases}
 \end{equation}
@@ -123,15 +127,15 @@ We define constraints on the objective function (\ref{main_objective}), which pr
 Z=\{z \in Z: \sum_{j \in S \cup R}x^{(k)}_{j,z}>0 \}  ,\forall k \in C \label{main_cond_4}
 \end{align}
 
-The restriction (\ref{main_cond_1}) prohibits to a node in the graph $G$ has more than one output arc. The restriction (\ref{main_cond_2}) prohibits to a node has more than one input arc.  The constraint (\ref{main_cond_3}) indicates that the number of input arcs to the node can not be less than the output arcs (this constraint considers the fact that the vehicle can leave the destination only if it has visited this node). The restriction (\ref{main_cond_4}) excludes local loops.
+The restriction (\ref{main_cond_1}) prohibits a node in the graph $G$ of having more than one output arc. The restriction (\ref{main_cond_2}) prohibits a node from having more than one input arc.  The constraint (\ref{main_cond_3}) indicates that the number of input arcs to the node can not be less than the output arcs (this constraint considers the fact that the vehicle can leave the destination only if it has visited this node). The restriction (\ref{main_cond_4}) excludes local loops.
 
-Then next constraints synchronize values of variables $X$ and $\vec{y}$ for each request $q \in Q$ and prohibits the service of receiver before a visit to the sender:
+The next constraints synchronize values of variables $X$ and $\vec{y}$ for each request $q \in Q$ and prohibits the courier service visiting the receiver before meeting with the sender first:
 \begin{align} 
 & x^{(k)}_{s_q} + x^{(k)}_{r_q} = 2 \cdot y^{(k)}_{q}(X), \forall k \in C, q \in Q  \\
 & y^{(k)}_{q}(X) \cdot (\tilde{t}^k_{r_q}(X^{(k)})-\tilde{t}^k_{s_q}(X^{(k)})\ge{0}, \forall k \in C, q \in Q
 \end{align}
 
-Define restrictions for accounting of vehicle capacity and time windows:
+Defining restrictions for the accounting of vehicle capacity and delivery time windows:
 \begin{align} 
 & \sum_{j\in{Q}} \omega_j \cdot y_{j}^{k} \leq L_k, \forall{k}\in{C}\\
 & t_{s}^{q} \leq \tilde{t}^k_{s_q}(X^{(k)} \leq t_{s}^{q}+ \Delta{t_{s}^{q}}, \forall q \in Q, \label{tws_cond} \\
@@ -141,32 +145,32 @@ Define restrictions for accounting of vehicle capacity and time windows:
 
 
 \subsection{Description of the Algorithm}
-Present the set of matrices $\{X^k\}$ in the form of a vector defined on the hypercube $E^\eta=\{0.1\}^\eta$, where $\eta=n\cdot(2m+1)\cdot 2m$. The aim of the task is to minimize the objective function:
+We present the set of matrices $\{X^k\}$ in the form of a vector defined on the hypercube $E^\eta=\{0.1\}^\eta$, where $\eta=n\cdot(2m+1)\cdot 2m$. The aim of the task is to minimize the objective function:
 \begin{align} 
 & F(\vec{u})\to min,\vec{u}\in E^{\eta}
 \end{align}	
 
-Denote by $\delta(\vec{u},\vec{v})$ the Hamming distance between $\vec{u}$ and $\vec{v}$. Through $N_l(\vec{u})$ we denote the neighborhood of a point $\vec{u}$ radius $l$, ie \cite{vrp_shafeyev}:
+Denote by $\delta(\vec{u},\vec{v})$ the Hamming distance between $\vec{u}$ and $\vec{v}$. Through $N_l(\vec{u})$ we denote the neighborhood of a point $\vec{u}$ radius $l$\cite{vrp_shafeyev}:
 \begin{align} 
 & N_l(\vec{u})=\{\vec{v} \in E^{\eta}:\delta(\vec{u},\vec{v})\le l \}, l=\bar{1,\eta}
 \end{align}	
 
-When $l=\eta$ a set $ N_l(\vec{u})$ for any vector $\vec{u}$ coincides with the set $E^{\eta}$ and being in this neighborhood vector with a minimum value of the objective function is equivalent to solving the original problem. The standard algorithm local search algorithm starts with a randomly selected vector $\vec{u^0}$.
+When $l=\eta$ a set $ N_l(\vec{u})$ for any vector $\vec{u}$ coincides with the set $E^{\eta}$ and being in this neighborhood vector with a minimum value of the objective function is equivalent to solving the original problem. The classic Local Search algorithm starts with a randomly selected vector $\vec{u^0}$.
 On the $i$ step of the algorithm move from the current vector in the neighboring that the minimum value of the objective function in the neighborhood of the given vector:
 \begin{align} 
 & F(\vec{u}^{i+1})=min\{F(\vec{v}):\vec{v} \in N_l(\vec{u}^i)\}
 \end{align}	
 
-The algorithm terminates at a local optimum, when $F(\vec{u^{i+1}})=F(\vec{u^i})$. When solving the transportation problem is a typical situation when many local optimums and only one of them is global:
+The algorithm terminates at a local optimum, when $F(\vec{u^{i+1}})=F(\vec{u^i})$. In VRPs there are a typical situation when many local optimums and only one of them is global:
 \begin{align} 
 & F_{opt}=min\{F(\vec{v}):v \in E^{\eta}\}
 \end{align}	
 
-To ensure that the algorithm did not stop in a local minimum, and passed from one local minimum to another, with edges removed the Central point and when searching for the minimum of the following rule applies. Let $l=2$ and in the transition from $\vec{u^{i+1}}$ to $\vec{u^i}$ change the values in the coordinate $(u_\lambda^{i}, u_\omega^{i})$. The algorithm stores such pair for the last $h$ couple of steps and in the next step prohibits the movement in these directions. An ordered list of such pairs
+To ensure that the algorithm does not stop in a local minimum, and move from one local optimum to another, we must remove the central point  from the current neighborhood and when algorithm search the minimum of the following rule applies. Let $l=2$ and current position move from $\vec{u^{i+1}}$ to $\vec{u^i}$ than it changes the values in the coordinate $(u_\lambda^{i}, u_\omega^{i})$. The algorithm stores such pair for the last $h$ couple of steps and in the next step prohibits the movement in these directions. An ordered list of such pairs:
 \begin{align} 
 & \phi^i=\{(u_\lambda^{i},u_\omega^{i}),(u_\lambda^{i-1},u_\omega^{i-1}),\cdots,(u_\lambda^{i-h+1},u_\omega^{i-h+1}) \} 
 \end{align}	
-called the list of prohibitions. When building the list of all pairs of different and a pair of $(u_\lambda,u_\omega),\lambda \ne \omega$ does not prohibit the movement of pairs $(u_\lambda,u_\lambda)$ and $(u_\omega,u_\omega)$. When $l>2$ similarly constructed three coordinates, fours, etc. A set of non-restricted vectors denote by $N_l(\vec{u^i},\vec{\phi^i})$. In order that the search was effectively, it is advisable to use small values $h$ and to control this parameter in the course of the algorithm.
+called the Tabu List. When building the list of all pairs and a pair of $(u_\lambda,u_\omega),\lambda \ne \omega$ does not prohibit the movement of pairs $(u_\lambda,u_\lambda)$ and $(u_\omega,u_\omega)$. When $l>2$ similarly constructed three coordinates, fours, etc. A set of non-restricted vectors denote by $N_l(\vec{u^i},\vec{\phi^i})$. In order that the search was efficiently, it is advisable to use small values $h$ and to control this parameter in the course of the algorithm.
 
 \begin{algorithm}[H]
 	\textbf{function TabuSearch}($u^0,l,p,h$) \\
@@ -213,29 +217,96 @@ In the presented scheme, it was assumed that the value of $h$ (the dimension of 
 If at the next step of the algorithm, the edge  $N_l(\vec{u^i},\vec{\phi^i},p)$ turned out to be empty, it is added to the list of fictitious vector $\vec{0}$. This vector nothing forbids, but reduces the number of bans per unit.
 
 \subsection{Initialization}
-To use a search algorithm is restricted by the need to build the initial solution. To obtain the initial solution $\vec{u^0}$ you can use a heuristic method to construct the route. The essence of these methods is the following. Every car has consistently built a route by adding another is not considered clients according to specified rules.
+To use the Tabu Search Algorithm, you must build the initial decision. For the initial solution $ \vec{u^0} $, you can use the heuristic method of route constructing\cite {Cordeau2001, Braysy}. The essence of these methods is as follows. For each car built in series by adding a route client orders on pre-defined rules are not yet considered. In this case, to preserve the order of visits vertices pair is meant by the order <<sender-receiver>>. This algorithm is fast enough (computational complexity $O(n^3)$ \cite{Babb}), so it is convenient to use for initialization vector $\vec{u^0}$.
 
-The most known method of construction of the route proposed by Solomon in 1987 year and found in the literature as a method of Solomon. This algorithm is fast enough (computational complexity $O(n^3)$, therefore, it is useful to initialize a vector $\vec{u^0}$.
-
-At the beginning of the algorithm, you add one to a customer on the route according to time limits. The choice of the first client is randomly or chosen one, you want to serve first. Then, each valid client $u$ from the set of outstanding clients $Q^{'}$ (the set $Q^{'}\subset{Q}$) evaluated insertion between two adjacent nodes route. For selection of inserts used criterion:
+At the beginning of the algorithm going to add a single request to the route in accordance with the time constraints. The choice of the first application occurs randomly, or select the one you want to perform before others. Then every possible claim $u$ from the set of unchecked orders $ Q $ (the set $ Q'\in Q$) is estimated for inserting it in the beginning of the route, or the end of the route between two adjacent nodes. the following criteria are used to select the insertion point:
 \begin{align} 
-& c(v_i,u,v_i+1)=[\min_{p=2,\dots,n^k}(\Omega_{p-1,u}^k+\Omega_{u,p}^k-\mu \Omega_{p-1,p}^k) ]
-\end{align}	
-where:
+\label{insert_kr}
+c(k,v_i,u,v_{i+1}) = \min =
+\begin{cases}
+\min_{q=2,\dots,n^k}(\Omega_{q-1,u}^k+\Omega_{u}^{k}+\Omega_{u,q}^{k}-\mu \Omega_{q-1,q}^k),\\
+\Omega_{k,u}^k+\Omega_{u,q}^k+\Omega_{u}^k\mu \Omega_{q,q}^k), q=1\\
+\Omega_{q,u}^k+\Omega_{u}^k, q=n^k
+\end{cases}
+\end{align} 
+where:\\
+$k$ --  a vehicle route $k\in C$;\\
+$n^k$ - a number of nodes in the route;\\
+$\mu$ --a tuning parameter, $\mu \ge 0 $;\\
+$\Omega_{u}^k=\Omega^k[\vec{P}_{s_q}, \vec{P}_{r_u}]$ -- insert a new request between existing sender and receiver;\\
+$\Omega_{u,q}^k=\Omega^k[\vec{P}_{r_u}, \vec{P}_{q}]$ -- insert a new request between existing sender and receiver to the begin of the route;\\
+$\Omega_{q,u}^k=\Omega^k[\vec{P}_{q}, \vec{P}_{s_u}]$ -- insert a new request between existing sender and receiver to end of the route.
 
-$k$ - vehicle route $k\in C$;
-$n^k$ - the number of nodes in the route;
-$\mu$ - arbitrary parameter, $\mu \ge 0 $.
-
-Added the client, which is $c(v_i,u,v_i+1)$ least:
+Adds that the request, which $c(k,v_i,u,v_{i+1})$ It will be minimal:
 \begin{align} 
-& u^*:c(v_i,u^*,v_i+1)=min[c(v_i,u,V_i+1)]
-\end{align}	
+\label{kriterij}
+& u^*:c(k,v_i,u^*,v_{i+1})=\min_{u}[c(k,v_i,u,v_{i+1})]
+\end{align} 
+As a result, $u^*$ is added to the current route $k$ on the most advantageous position.
 
-As a result the client $u^*$ is added to the current route $k$ the position between nodes $v_i$ and $v_(i+1)$.
+\begin{figure}[h]
+	\center{\includegraphics[width=1\linewidth]{images/pict1}}
+	\caption{An example embodiment of a method of route constructing a single step}
+	\label{ris:pict1}
+\end{figure}
+
+Fig. \ref {ris:pict1} represented by a weighted graph, which shows the example of the execution of one step by designing routes: \\
+a) the original graph, which shows the options to add new requests to the route; \\
+b) the route, which was built by construction method after first step.
+
+\textit {Example.} Initially we have the request, which consists of a sender and receiver. The value of the cost function $\Omega $ are shown in the graph arcs (Figure \ref {ris:pict1}.). You need to add new applications to the route, using the criteria \ref{insert_kr} and \ref{kriterij}. The coefficient $\mu=0.5$.
+
+		
+\textit{Solution.}Consider the process of adding new requests. Of the two proposed requests $(\{S_2,R_2\},\{S_3,R_3\})$ we choose the one you want to add in the first place. Depending on the location where you can add application (beginning, end, middle), select the desired criteria. Thus, we find the optimal solution to insert a new order $\{S_2,R_2\}$:\\
+$\min[c(k,S_1, \{S_2, R_2\}, R_1), c(k,\{S_2, R_2\}, S_1, R_1), c(k, S_1, R_1, \{S_2, R_2\})]=\min[3+11+4-0.5 \cdot 8; 17+11+8-0.5 \cdot 20; 2+11]=\min[14;26;13]$\\
+We find the optimal place insert a new request $\{S_3,R_3\}$:\\ 
+$\min[c(k,S_1, \{S_3, R_3\}, R_1), c(k,\{S_3, R_3\}, S_1, R_1), c(k, S_1, R_1, \{S_3, R_3\})]=\min[6+9+12-0.5 \cdot 8; 10+9+13-0.5 \cdot 20; 5+9]=\min[23;22;14]$.\\
+From the solutions found will choose the solution with the lowest cost $c(k,v_i,u,v_{i+1})$.In this example, $c(k, S_1, R_1, \{S_2, R_2\}=13$.
+
+Thus, the new route will consist of initial requests and new requests  $\{S_2,R_2\}$, which will be added to the end of the route.
+
+			
+\textit{Conclusion}: route in $\{S_1,R_1\}$ it is necessary to add  request $\{S_2,R_2\}$, which will be added to the end of the route
+
+
+Fig. \ref{ris:pict2}presented the options of adding a new request to route $\{S_2,R_2\}$:\\
+a) the option of adding request $\{S_2,R_2\}$ in the end of the route;\\
+b) the option of adding request $\{S_2,R_2\}$ in the beginning of the route;\\
+c) the option of adding request $\{S_2,R_2\}$ between nodes $\{S_1,R_1\}$.
+
+Fig. \ref{ris:pict3} presented the options of adding a new request to route $\{S_3,R_3\}$:\\
+a) the option of adding request $\{S_3,R_3\}$ in the end of the route;\\
+b) the option of adding request $\{S_3,R_3\}$ in the beginning of the route;\\
+c) the option of adding request $\{S_3,R_3\}$ between nodes $\{S_1,R_1\}$.
+
+\begin{figure}[t]
+	\center{\includegraphics[width=1\linewidth]{images/pict2}}
+	\caption{Options added  the request to route $\{S_2,R_2\}$}
+	\label{ris:pict2}
+\end{figure}
+
+\begin{figure}[t]
+	\center{\includegraphics[width=1\linewidth]{images/pict3}}
+	\caption{Options added the request to route $\{S_3,R_3\}$}
+	\label{ris:pict3}
+\end{figure}
 
 \subsection{A Method of Forming Solutions Neighborhood}
-The most difficult part of the local search algorithm with the prohibitions are viewing the surroundings $N_l(\vec{u^i},\vec{\phi^i})$ of the current point $\vec{us^i}$. For even larger values of $l$ and the parameter $p=1$ in the outskirts plenty of points. But due to the nature of the model's constraints many of them are not the solution. Therefore, due to the nature of the considered discrete tasks, we used the following method of determining the area. On the $i$ step of the algorithm compiled from routes pair: $\{R_1,R_2\},\{R_1,R_3\},\dots,\{R_1,R_n\},\{R_2,R_1\}, \{R_2,R_3\},\dots,\{R_2,R_n\},\dots,\{R_{n-1},R_{n}\}$. Then over each pair of routes is performed in moving requests. The resulting displacement vectors $\vec{u}$ are neighborhood $N_l(\vec{u^i},\vec{\phi^i})$. For moving  we used change-move  and swap-move operations.
+
+During the work of the Tabu Search Algorithm should be carried out watching the neighborhood $N_{l}(\vec {u^i})$ current point $ \vec{u^i}$. In the calculation of the route in the neighborhood gets a sufficiently large number of points. But due to the limitations of our model features many of these points is not a solution to the problem. Therefore, due to the peculiarities of the considered discrete problem, we used the following method definition of a neighborhood.
+
+Let $x^{k}(v)$ - node index $v$, $ v \in R \cup S $ in the path of the vehicle $ k \in C $. Each request consists of pairs $\{S, R \}$, where $S$ - sender, and $R$ - recipient. During the formation of the neighborhood, should be preserved the integrity of the route that is performed restrictions (\ref {main_cond_1} -- \ref {main_cond_4}). Above route requests $ Route_i $, $ i = 1, \dots n $ are performed permutation operation. The findings of the permutations of the vectors $ \vec {u} $ and is a neighborhood of $ N_{l} (\vec{u^i}) $. To swap transactions used movement and absorption.
+	
+Operation swallowing is shown in Figure \ref {ris: figures}. (A), which shows the two routes $Route_1 $ i $ Route_2 $. Route $ Route_1 $ consists of catch $ \{C_1, S_1, R_1, S_2, \\ R_2, S_3, R_3 \}$, and the route is $ Route_2 $ node $ \{C_2, S_4, R_4, S_5, R_5, S_6, R_6 \} $. During the operation of the absorption $ \{S_1, R_1 \} $ in the route $ Route_1 $, paste this application to route $ Route_2 $ can be performed on $ n + 1 $ positions.
+
+
+\begin{figure}[h]
+	\center{\includegraphics[width=0.75\linewidth]{images/neighboard.png}}
+	\caption{Example of operations: a) absorption and b) moving}
+	\label{ris:figures}
+\end{figure}
+
+The move operation is shown in figure \ref{ris: figures}. (B). This figure shows the route $ Route_1 $, which consists of nodes $ \{C_1, S_1, R_1, S_2, R_2, S_3, R_3 \} $. To save the route integrity: node $S_i $ (sender) can be visited only to $ R_i $ (recipient), on this basis during the move operation, the node $ S_i $ can move is to satisfy the condition $ 0 < x^{new} ( S_i) < \widetilde{u} (R_i) $, and  node $R_i$ can be moved until the condition is $ n^k \geq x^{new} (R_i)> \widetilde{u} (S_i) $.
 
 
 \subsection{Analysis of the algorithm parameters}
@@ -471,4 +542,5 @@ Los Angeles,  2012, 81--115.
 
 
 \end{document} \grid
+\grid
 \grid
