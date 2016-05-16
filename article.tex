@@ -156,7 +156,7 @@ Denote by $\delta(\vec{u},\vec{v})$ the Hamming distance between $\vec{u}$ and $
 \end{align}	
 
 When $l=\eta$ a set $ N_l(\vec{u})$ for any vector $\vec{u}$ coincides with the set $E^{\eta}$ and being in this neighborhood vector with a minimum value of the objective function is equivalent to solving the original problem. The classic Local Search algorithm starts with a randomly selected vector $\vec{u^0}$.
-On the $i$ step of the algorithm move from the current vector in the neighboring that the minimum value of the objective function in the neighborhood of the given vector:
+On the $i$ step of the algorithm the current vector moves to the minimum value of the objective function in the neighborhood:
 \begin{align} 
 & F(\vec{u}^{i+1})=min\{F(\vec{v}):\vec{v} \in N_l(\vec{u}^i)\}
 \end{align}	
@@ -166,15 +166,15 @@ The algorithm terminates at a local optimum, when $F(\vec{u^{i+1}})=F(\vec{u^i})
 & F_{opt}=min\{F(\vec{v}):v \in E^{\eta}\}
 \end{align}	
 
-To ensure that the algorithm does not stop in a local minimum, and move from one local optimum to another, we must remove the central point  from the current neighborhood and when algorithm search the minimum of the following rule applies. Let $l=2$ and current position move from $\vec{u^{i+1}}$ to $\vec{u^i}$ than it changes the values in the coordinate $(u_\lambda^{i}, u_\omega^{i})$. The algorithm stores such pair for the last $h$ couple of steps and in the next step prohibits the movement in these directions. An ordered list of such pairs:
+To ensure that the algorithm does not stop at a local minimum and move from one local optimum to another, we must remove the central point  from the current neighborhood and when the algorithm searches for the minimum, the following rule applies. Let $l=2$ and the current position moves from $\vec{u^{i}}$ to $\vec{u^{i+1}}$ therefore changing the values in the coordinate $(u_\lambda^{i}, u_\omega^{i})$. The algorithm stores such pairs for the last $h$ amount of steps and in the next step prohibits the movement in these directions. An ordered list of such pairs:
 \begin{align} 
 & \phi^i=\{(u_\lambda^{i},u_\omega^{i}),(u_\lambda^{i-1},u_\omega^{i-1}),\cdots,(u_\lambda^{i-h+1},u_\omega^{i-h+1}) \} 
 \end{align}	
-called the Tabu List. When building the list of all pairs and a pair of $(u_\lambda,u_\omega),\lambda \ne \omega$ does not prohibit the movement of pairs $(u_\lambda,u_\lambda)$ and $(u_\omega,u_\omega)$. When $l>2$ similarly constructed three coordinates, fours, etc. A set of non-restricted vectors denote by $N_l(\vec{u^i},\vec{\phi^i})$. In order that the search was efficiently, it is advisable to use small values $h$ and to control this parameter in the course of the algorithm.
+is called the Tabu List. The pair $(u_\lambda,u_\omega),\lambda \ne \omega$ does not prohibit the movement of pairs $(u_\lambda,u_\lambda)$ and $(u_\omega,u_\omega)$. When $l > 2$, the Tabu List is created accordingly for 3 coordinates, 4 coordinates, etc. A set of non-restricted vectors are denoted by $N_l(\vec{u^i},\vec{\phi^i})$. In order for the search to be efficient, it is advisable to use small values of $h$ and to control this parameter throughout the algorithm.
 
 \begin{algorithm}[H]
 	\textbf{function TabuSearch}($u^0,l,p,h$) \\
-	// Initialize variables:	\\
+	// Initial variables:	\\
 	$u^{opt} = u^0$
 	$F^{opt} = F^0$
 	$\phi^{0} =  \emptyset$
@@ -207,19 +207,18 @@ called the Tabu List. When building the list of all pairs and a pair of $(u_\lam
 \label{alg:TabuSearch}
 \end{algorithm}
 
-Denote by $N_l(\vec{u^i},\vec{\phi^i},p)$ probabilistic edge that goes from a deterministic $N_l(\vec{u^i},\vec{\phi^i})$ as follows. Each vector $\vec{v} \in N_l(\vec{u^i},\vec{\phi^i})$ with probability $p$ included in the neighborhood $N_l(\vec{u^i},\vec{\phi^i},p)$ regardless of other points. Note that this set may be empty or contain only one point. The General scheme of the probabilistic search algorithm with a list of prohibitions referred to as pseudo-code in algorithm \\
-scheme \ref{alg:TabuSearch}.
+Denoted by $N_l(\vec{u^i},\vec{\phi^i},p)$ a probabilistic neighborhood which stems from a deterministic $N_l(\vec{u^i},\vec{\phi^i})$ as follows; each vector $\vec{v} \in N_l(\vec{u^i},\vec{\phi^i})$ with probability $p$ is included in the neighborhood $N_l(\vec{u^i},\vec{\phi^i},p)$ regardless of other points. Note that this set may be empty or contain only one point. The General scheme of the probabilistic Tabu Search algorithm in scheme \ref{alg:TabuSearch} is referred to as the pseudo-code.
 
-As the stopping criterion is based on the total number of steps $N_stop$, in the course of which does not change the value $F_{opt}$. Values $l,p,h$ are the control parameters of the algorithm. Their choice depends on the problem dimension.
+The stopping criterion is based on the total number of steps $N_{stop}$, which does not change the value $F_{opt}$. Values $l,p,h$ are the control parameters of the algorithm. Their choice depends on the problems dimension.
 
-In the presented scheme, it was assumed that the value of $h$ (the dimension of the deny list) does not change in the course of the algorithm. This creates certain difficulties in the implementation of the scheme, as it is unknown how long is to take a list of prohibitions. At small $h$ the algorithm can start walking cycle. At large $h$ the search becomes inefficient. One of the simple rules regulating the length of the list of prohibitions is the following.
+In the presented scheme, it was assumed that the value of $h$ (the dimension of the Tabu List) does not change throughout the course of the algorithm. This creates certain difficulties in the implementation of the scheme, as it is unknown how long the Tabu List size should be. At small $h$ the algorithm can get into an infinite loop. At large $h$ the search becomes inefficient.
 
-If at the next step of the algorithm, the edge  $N_l(\vec{u^i},\vec{\phi^i},p)$ turned out to be empty, it is added to the list of fictitious vector $\vec{0}$. This vector nothing forbids, but reduces the number of bans per unit.
 
 \subsection{Initialization}
-To use the Tabu Search Algorithm, you must build the initial decision. For the initial solution $ \vec{u^0} $, you can use the heuristic method of route constructing\cite {Cordeau2001, Braysy}. The essence of these methods is as follows. For each car built in series by adding a route client orders on pre-defined rules are not yet considered. In this case, to preserve the order of visits vertices pair is meant by the order <<sender-receiver>>. This algorithm is fast enough (computational complexity $O(n^3)$ \cite{Babb}), so it is convenient to use for initialization vector $\vec{u^0}$.
+To use the Tabu Search Algorithm, you must first build the initial solution. For the initial solution $ \vec{u^0} $, you can use the heuristic method of route constructing\cite {Cordeau2001, Braysy}. The essence of these methods is as follows. According to the rules of the algorithm routes for each vehicle are constructed as client requests come in order to ensure efficiency.  
+To preserve the order of visits of the nodes by the vehicles in the pair are ordered ''sender-receiver''.This algorithm is fast enough (computational complexity $O(n^3)$ \cite{Babb}), so it is convenient to use for the initialization of the vector $\vec{u^0}$.
 
-At the beginning of the algorithm going to add a single request to the route in accordance with the time constraints. The choice of the first application occurs randomly, or select the one you want to perform before others. Then every possible claim $u$ from the set of unchecked orders $ Q $ (the set $ Q'\in Q$) is estimated for inserting it in the beginning of the route, or the end of the route between two adjacent nodes. the following criteria are used to select the insertion point:
+At the beginning of the algorithm a single request is added to each route in accordance with the time constraints. The first node(sender) is chosen randomly or is selected the one you want to perform before others. Then every possible request $u$ from the set of unchecked requests $ Q' $ (the set $ Q'\in Q$) is estimated by inserting it in the beginning of the route, or the end of the route between two adjacent nodes. the following criteria is used to select the insertion point:
 \begin{align} 
 \label{insert_kr}
 c(k,v_i,u,v_{i+1}) = \min =
@@ -234,15 +233,15 @@ $k$ --  a vehicle route $k\in C$;\\
 $n^k$ - a number of nodes in the route;\\
 $\mu$ --a tuning parameter, $\mu \ge 0 $;\\
 $\Omega_{u}^k=\Omega^k[\vec{P}_{s_q}, \vec{P}_{r_u}]$ -- insert a new request between existing sender and receiver;\\
-$\Omega_{u,q}^k=\Omega^k[\vec{P}_{r_u}, \vec{P}_{q}]$ -- insert a new request between existing sender and receiver to the begin of the route;\\
-$\Omega_{q,u}^k=\Omega^k[\vec{P}_{q}, \vec{P}_{s_u}]$ -- insert a new request between existing sender and receiver to end of the route.
+$\Omega_{u,q}^k=\Omega^k[\vec{P}_{r_u}, \vec{P}_{q}]$ -- insert a new request between existing sender and receiver to the begining of the route;\\
+$\Omega_{q,u}^k=\Omega^k[\vec{P}_{q}, \vec{P}_{s_u}]$ -- insert a new request between existing sender and receiver to the end of the route.
 
-Adds that the request, which $c(k,v_i,u,v_{i+1})$ It will be minimal:
+Adds that request, which $c(k,v_i,u,v_{i+1})$ will be minimal:
 \begin{align} 
 \label{kriterij}
 & u^*:c(k,v_i,u^*,v_{i+1})=\min_{u}[c(k,v_i,u,v_{i+1})]
 \end{align} 
-As a result, $u^*$ is added to the current route $k$ on the most advantageous position.
+As a result, $u^*$ is added to the current route $k$ in the most advantageous position.
 
 \begin{figure}[h]
 	\center{\includegraphics[width=1\linewidth]{images/pict1}}
@@ -250,14 +249,14 @@ As a result, $u^*$ is added to the current route $k$ on the most advantageous po
 	\label{ris:pict1}
 \end{figure}
 
-Fig. \ref {ris:pict1} represented by a weighted graph, which shows the example of the execution of one step by designing routes: \\
-a) the original graph, which shows the options to add new requests to the route; \\
-b) the route, which was built by construction method after first step.
+Fig. \ref {ris:pict1} represented by a weighted graph, which shows the example of the execution of one step of designing routes: \\
+a) the original graph, which shows options to add new requests to the route; \\
+b) the route, which was built by the construction method after first step.
 
-\textit {Example.} Initially we have the request, which consists of a sender and receiver. The value of the cost function $\Omega $ are shown in the graph arcs (Figure \ref {ris:pict1}.). You need to add new applications to the route, using the criteria \ref{insert_kr} and \ref{kriterij}. The coefficient $\mu=0.5$.
+\textit {Example.} Initially we have a request, which consists of a sender and receiver. The value of the cost function $\Omega $ are shown in the graph arcs (Figure \ref {ris:pict1}.). You need to add new requests to the route, using the criteria \ref{insert_kr} and \ref{kriterij}. The coefficient $\mu=0.5$.
 
 		
-\textit{Solution.}Consider the process of adding new requests. Of the two proposed requests $(\{S_2,R_2\},\{S_3,R_3\})$ we choose the one you want to add in the first place. Depending on the location where you can add application (beginning, end, middle), select the desired criteria. Thus, we find the optimal solution to insert a new order $\{S_2,R_2\}$:\\
+\textit{Solution.}Consider the process of adding new requests. Of the two proposed requests $(\{S_2,R_2\},\{S_3,R_3\})$ it chooses the one which needs to be added firstly. Depending on the location where you can add application (beginning, end, middle), select the desired criteria. Thus, we find the optimal solution to insert a new order $\{S_2,R_2\}$:\\
 $\min[c(k,S_1, \{S_2, R_2\}, R_1), c(k,\{S_2, R_2\}, S_1, R_1), c(k, S_1, R_1, \{S_2, R_2\})]=\min[3+11+4-0.5 \cdot 8; 17+11+8-0.5 \cdot 20; 2+11]=\min[14;26;13]$\\
 We find the optimal place insert a new request $\{S_3,R_3\}$:\\ 
 $\min[c(k,S_1, \{S_3, R_3\}, R_1), c(k,\{S_3, R_3\}, S_1, R_1), c(k, S_1, R_1, \{S_3, R_3\})]=\min[6+9+12-0.5 \cdot 8; 10+9+13-0.5 \cdot 20; 5+9]=\min[23;22;14]$.\\
@@ -310,7 +309,7 @@ The move operation is shown in figure \ref{ris: figures}. (B). This figure shows
 
 
 \subsection{Analysis of the algorithm parameters}
-The Tabu Search algorithm has two main parameters: $h$ -- size of the list of prohibitions and $N_{neighbors}$ -- accepted count limit of size of neighbordhood $N_l(\vec{u})$. For the experiments, we constructed the test tasks on the basis of the capacity routing problems developed by Breedam, Fisher, Christofides and Eilon. To determine trends in time and cost of the decision we used exponential smoothing by a factor of $0.1$.
+The Tabu Search algorithm has two basic parameters: $h$ -- size of the list of prohibitions and $N_{neighbors}$ -- accepted count limit of size of neighbordhood $N_l(\vec{u})$. For the experiments, we constructed the test tasks on the basis of the capacity routing problems developed by Breedam, Fisher, Christofides and Eilon. To determine trends in time and cost of the decision we used exponential smoothing by a factor of $0.1$.
 
 \begin{figure}[h]
 	\hfil\includegraphics[height=3.0in]{images/tabuSize_stepCount}\hfil
@@ -349,9 +348,9 @@ In the second experiment (see figure \ref{aba:fig4}) we built a relationship bet
 
 \subsection{Modification}
 
-The first generalized diagram is as follows. First, the set of solutions is constructed by Solomon. Then every solution is improved by tabu search and choose the best solution according to the objective function.
+The first generalized diagram is as follows. First, the set of solutions is constructed by route construction algorithm. Then every solution is improved by Tabu Search and choose the best solution according to the objective function.
 
-Modification of the scheme is based on the hypothesis of "On a large valley"\cite{opt_Kochetov}. According to this hypothesis, the average local optima are located much closer to the global than a randomly chosen point. There is a certain concentration of local optimum in a small part of the feasible region, which is figuratively called a large valley. If this assumption is true, then it is advisable to remember the best solutions and based on them design new original decision. We use this idea to solve the  Routing Courier Delivery Problem.
+Modification of the scheme is based on the hypothesis of ''On a large valley''\cite{opt_Kochetov}. According to this hypothesis, the average local optima are located much closer to the global than a randomly chosen point. There is a certain concentration of local optimum in a small part of the feasible region, which is figuratively called a large valley. If this assumption is true, then it is advisable to remember the best solutions and based on them design new original decision. We use this idea to solve the  Routing Courier Delivery Problem.
 
 We proceed to the description of the algorithm in scheme \ref{alg:constructSolution}. Let $U^{opt}$ is a sorted array of optimal solutions by value of the objective function ascending,  ie:
 \begin{equation} \label{u_sorted}
@@ -400,11 +399,11 @@ It then crosses solutions by the following rule: with the first solution is rand
 
 Now we describe the primary function $SolveCDP()$ of the modified algorithm presented in pseudocode form in Scheme \ref{alg:modTabuSearch}. In this function using a loop is a sequential formation of an array of the best solutions $U^{opt}$ by means TabuSearch algorithm.   
 
-Based on the results of the experiments described in the preceding section, we decided to set the parameters of the algorithm are not fixed values, but as a random variable of predetermined period. For example, the size of the tabu list $h$ is defined as the interval $[10,35]$(see pict. \ref{aba:fig2} and  pict. \ref{aba:fig3}) and the neighbordhood size $l=N_{neighbordhood}$ is defined as the interval $[600\cdot n,850\cdot n]$, where $n$ -- problem size (see pict. \ref{aba:fig4} ).
+Based on the results of the experiments described in the preceding section, we decided to set the parameters of the algorithm are not fixed values, but as a random variable of predetermined period. For example, the size of the tabu list $h$ is defined as the interval $[10,35]$(see pict. \ref{aba:fig2} and  pict. \ref{aba:fig3}) and the neighbordhood size $l=N_{neighbordhood}$ is defined as the interval $[6\cdot n,8.5\cdot n]$, where $n$ -- problem size (see pict. \ref{aba:fig4} ).
 
-Let $\vec{\psi_i} = (\psi^1_i,\psi^2_i,\psi^3_i) = (\tilde{l_i},\tilde{p_i},\tilde{l_h})$ -- a set of values of the TabuSearch configuration parameters which was using for solving the problem in the step $i$.
+Let $\vec{\psi_i} = (\psi^1_i,\psi^2_i,\psi^3_i) = (\tilde{l_i},\tilde{p_i},\tilde{h_i})$ -- a set of values of the TabuSearch configuration parameters which was using for solving the problem in the step $i$.
 
-Let $[\psi^j_{begin}, \psi^j_{end}]$ -- an optimal interval of the TabuSearch $j$ -parameter. (For example: if $j=3$, then: $[\psi^3_{begin}, \psi^3_{end}]= [h_{begin}, h_{end}] = [10, 40] $). These intervals are initial data and they are set in the initialization block. 
+Let $[\psi^j_{begin}, \psi^j_{end}]$ -- an optimal interval of the TabuSearch $j$ -parameter. For example: if $j=3$, then: $[\psi^3_{begin}, \psi^3_{end}]= [h_{begin}, h_{end}] = [10, 40] $. These intervals are initial data and they are set in the initialization block. 
 
 The configuration parameters  $\psi^j_i $ are randomly selected from the interval $[\psi^j_{begin}, \psi^j_{end}]$ according to a distribution law. We proposed to build the distribution density $f_j(\psi^j_i)$ of the random variable $\psi^j_i$ as follows. At first, we define anchor points:
  
@@ -443,7 +442,7 @@ Therefore, we presented the distribution function $f_j(z)$ as a sum of kernel fu
 	  	$\psi^j_i = random(\psi^j_{begin}, \psi^j_{end}, f_j) $
 	  	}
 	  	
-		// Make solution using euristics construction algorithms \\
+		// Make solution using heuristics construction algorithms \\
 		$u^0 = constructSolution(U^{opt} ,n^{min}_s)$ 
 		
 		// Improve solution $u^0$ using TabuSearch algorithm 
@@ -483,23 +482,18 @@ Therefore, we presented the distribution function $f_j(z)$ as a sum of kernel fu
  	\hfil\includegraphics[height=3.0in]{images/tabu_mod.png}\hfil
  	\caption
  	{
- 		The dependence of the quality of solutions and  the breaking point time by classic and modified algorithms using $ TimeSpent $ termination strategy
+ 		The dependence of the quality of solutions and  the breaking point time by classic algorithm('$\times$' mark) with random selection tuning parameters and modified('o' mark) algorithms using $ TimeSpent $ termination strategy. 
  	}
  	\label{aba:fig5}
  \end{figure}
  
  
 \subsection{Conclusion}
-During the research has been investigated and implemented tabu search algorithm to solve the Static Routing Courier Delivery problem with time constraints. Also a modified algorithm was developed  based on the Tabu Search algorithm to improve the quality of the solutions. Modified algorithm gave the best solutions in terms of the balance between the number of vehicles and the cost traveled.  In practice this algorithm can be used for decision support in intelligent systems for improving the quality of customer service and for reducing waiting the time to use vehicle, this will reduce fuel costs and depreciation of transport.
-
+During the research has been investigated and implemented Tabu Search algorithm to solve the Routing Courier Delivery problem with time windows. Also a modified algorithm was developed  based on the Tabu Search Algorithm to improve the quality of solutions. Modified algorithm was given the best solutions in terms of the balance between the number of vehicles and the cost traveled.  In practice this algorithm can be used in intelligent systems for decision support, improving the quality of customer service and reducing waiting time, this will reduce fuel costs and depreciation of transport.
 The analysis of the parameters of implemented algorithms allowed us to determine their optimal values for this class of routing problems. With the modified algorithm was found solutions of model problems, which in most cases have an acceptable deviation from the global optimum.
-
-
-
 
 \begin{thebibliography}{99}
 %In brackets we writes the name which is used for referencing.
-
 \bibitem{RCDS} F.~Ordonez, Chen Wang, A New Approach for Routing Courier Delivery Services //METRANS Transportation Center:University of Southern California
 Los Angeles,  2012, 81--115.
 
@@ -526,13 +520,23 @@ Los Angeles,  2012, 81--115.
 
 \bibitem{Tabu_search} O.~Braysy, M.~Gendreau, Vehicle Routing Problem with Time Windows, Part I: Route Constuction and local algorithms // Transportation science Vol.39 No. 1, 2005, p. 104-118.
 
-\bibitem{Goldberg_Kennedy} V.~Goldberg, R.~Kennedy, An Efficient cost scaling algorithm for the assignment problem, Math. Program., 1995, p. 153--177.  
+\bibitem{Goldberg_Kennedy} V.~Goldberg, R.~Kennedy, An Efficient cost scaling algotirhm for the assignment problem, Math. Program., 1995, p. 153--177.  
 
 \bibitem{problems_Christofides}  N. Christofides, S. Eilon, An algorithm for the vehicle dispatching problem //Operational Research Quarterly, 20, 1969, p. 309–318.
 
 \bibitem{problems_Golden}  B. Golden, E. Wasil, J. Kelly, I-M. Chao. The impact of metaheuristics on solving the vehicle routing problem: Algorithms, problem sets, and computational results. In T. Crainic and G. Laporte, editors // Fleet Management and Logistics, Kluwer, Boston, 1998 p. 33–56.
 
 \bibitem{problems_Taillard}  E. Taillard. VRP benchmarks.\\ url: http://mistic.heig-vd.ch/taillard/problemes.dir/vrp.dir/vrp.html, 1993.
+
+\bibitem{Attanasio} A.~Attanasio, J.~Bregman,G.~Ghiani, E.~Manni. Real-time fleet management at Ecourier Ltd. Dynamic Fleet Management, volume 38 of Operations Research/Computer Science Interfaces, chapter 10, p.219--238, 2007.
+
+\bibitem{Beaudry} A.~Beaudry, G.~Laporte, T.~Melo, Nickel. Dynamic transportation of patients in hospitals. Berichte des Fraunhofer ITWM, Nr. 104 :p.1--34, 2010.
+
+\bibitem{Romero} M.Romero, L.Sheremetov and A.Soriano. A genetic algorithm for the pickup and delivery problem: An application to the helicopter offshore transportation. In Theoretical Advances and Applications of Fuzzy Logic and Soft Computing, volume 42 of Advances in Soft Computing, 2007, p. 35--44.
+
+\bibitem{Kergosien} M.Romero, L.Sheremetov and A.Soriano. Yannick Kergosien, Christophe Lent, D. Piton, Jean-Charles Billaut. A tabu search heuristic for a dynamic transportation problem of patients between care units. 29 pages. 2010.
+
+\bibitem{Sarak} H.~Sarak, A.~Satman. The degree-day method to estimate the residential heating natural gas consumption in Turkey: a case study. Pergamon, Energy 28 (2003) 929--939.
 
 
 
